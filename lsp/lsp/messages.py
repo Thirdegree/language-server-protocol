@@ -1,9 +1,9 @@
 from typing import Any, NotRequired, TypedDict
 
-from lspy.lsp.client import ClientCapabilities
-from lspy.lsp.common import (ClientInfo, DocumentUri, ServerInfo, TraceValue,
-                             WorkspaceFolder)
-from lspy.lsp.server import ServerCapabilities
+from lsp.lsp.client import ClientCapabilities
+from lsp.lsp.common import (ClientInfo, DocumentUri, ServerInfo, TraceValue,
+                            WorkspaceFolder)
+from lsp.lsp.server import ServerCapabilities
 
 
 class InitializeParams(TypedDict):

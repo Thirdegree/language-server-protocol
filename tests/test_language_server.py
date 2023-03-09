@@ -4,12 +4,12 @@ from asyncio import StreamReader, StreamWriter
 
 import pytest
 
-from lspy import LanguageServer
-from lspy.lsp.common import DocumentUri, Position, Range, T_Message
-from lspy.lsp.messages import InitializeParams, InitializeResult
-from lspy.lsp.server import (CodeAction, CodeActionContext, CodeActionParams,
-                             TextDocumentIdentifier)
-from lspy.protocol import JsonRpcRequest, JsonRpcResponse, Message
+from lsp import LanguageServer
+from lsp.lsp.common import DocumentUri, Position, Range, T_Message
+from lsp.lsp.messages import InitializeParams, InitializeResult
+from lsp.lsp.server import (CodeAction, CodeActionContext, CodeActionParams,
+                            TextDocumentIdentifier)
+from lsp.protocol import JsonRpcRequest, JsonRpcResponse, Message
 
 
 def request(method: str,

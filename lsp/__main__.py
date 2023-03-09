@@ -1,8 +1,8 @@
 import asyncio
 import sys
 
-from lspy import LanguageServer
-from lspy.lsp.messages import InitializeParams, InitializeResult
+from lsp import LanguageServer
+from lsp.lsp.messages import InitializeParams, InitializeResult
 
 
 class DummyLanguageServer(LanguageServer):

@@ -6,10 +6,10 @@ from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from typing import Any, AsyncIterator, Awaitable, Callable, Literal, Self
 
-from lspy.lsp.common import Location, LocationLink
-from lspy.lsp.messages import (InitializedParams, InitializeParams,
+from lsp.lsp.common import Location, LocationLink
+from lsp.lsp.messages import (InitializedParams, InitializeParams,
                                InitializeResult)
-from lspy.lsp.server import (CallHierarchyIncomingCall,
+from lsp.lsp.server import (CallHierarchyIncomingCall,
                              CallHierarchyIncomingCallsParams,
                              CallHierarchyItem, CallHierarchyOutgoingCall,
                              CallHierarchyOutgoingCallsParams,
@@ -40,7 +40,7 @@ from lspy.lsp.server import (CallHierarchyIncomingCall,
                              TypeHierarchySubtypesParams,
                              TypeHierarchySupertypesParams,
                              WillSaveTextDocumentParams)
-from lspy.protocol import JsonRpcError, JsonRpcResponse, LspProtocol, Message
+from lsp.protocol import JsonRpcError, JsonRpcResponse, LspProtocol, Message
 
 Json = dict[str, Any]
 JSONRPC_VERSION: Literal["2.0"] = "2.0"

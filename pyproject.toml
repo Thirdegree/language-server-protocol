@@ -1,5 +1,5 @@
 [project]
-name = "lspy"
+name = "language_server_protocol"
 version = "0.0.1"
 dynamic = ['dependencies']
 

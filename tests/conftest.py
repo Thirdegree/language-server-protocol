@@ -4,9 +4,9 @@ from typing import AsyncIterable, Callable
 
 import pytest
 
-from lspy import LanguageServer
-from lspy.lsp.messages import InitializeParams, InitializeResult
-from lspy.lsp.server import CodeAction, CodeActionParams, Command
+from lsp import LanguageServer
+from lsp.lsp.messages import InitializeParams, InitializeResult
+from lsp.lsp.server import CodeAction, CodeActionParams, Command
 
 
 class TestLanguageServer(LanguageServer):

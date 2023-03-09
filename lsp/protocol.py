@@ -8,7 +8,7 @@ from typing import (TYPE_CHECKING, Any, Generic, Literal, NotRequired, Self,
 
 import ujson as json
 
-from lspy.lsp.common import T_Message
+from lsp.lsp.common import T_Message
 
 if TYPE_CHECKING:
     from _typeshed import ReadableBuffer

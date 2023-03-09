@@ -5,9 +5,9 @@ from typing import Any
 import pytest
 import ujson as json
 
-from lspy.lsp.client import ClientCapabilities
-from lspy.lsp.messages import InitializeParams, InitializeResult
-from lspy.protocol import JsonRpcRequest, JsonRpcResponse, Message
+from lsp.lsp.client import ClientCapabilities
+from lsp.lsp.messages import InitializeParams, InitializeResult
+from lsp.protocol import JsonRpcRequest, JsonRpcResponse, Message
 
 
 class TestMessage:

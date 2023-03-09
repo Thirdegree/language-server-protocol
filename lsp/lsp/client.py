@@ -1,9 +1,9 @@
 from typing import Any, Literal, NotRequired, TypedDict
 
-from lspy.lsp.common import (CodeActionKind, EmptyDict, FailureHandlingKind,
-                             FoldingRangeKind, InsertTextMode, MarkupKind,
-                             PositionEncodingKind, ResourceOperationKind,
-                             SymbolKind, SymbolTag, TokenFormat)
+from lsp.lsp.common import (CodeActionKind, EmptyDict, FailureHandlingKind,
+                            FoldingRangeKind, InsertTextMode, MarkupKind,
+                            PositionEncodingKind, ResourceOperationKind,
+                            SymbolKind, SymbolTag, TokenFormat)
 
 
 class ClientWorkspaceCapabilitiesFileOptions(TypedDict):

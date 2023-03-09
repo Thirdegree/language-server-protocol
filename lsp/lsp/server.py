@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Literal, NotRequired, TypedDict
 
-from lspy.lsp.common import (URI, CodeActionKind, CodeActionTriggerKind,
+from lsp.lsp.common import (URI, CodeActionKind, CodeActionTriggerKind,
                              DocumentHighlightKind, DocumentUri, EmptyDict,
                              FileOperationPatternKind, FoldingRangeKind,
                              InsertTextMode, Location, MarkupKind, MonikerKind,
