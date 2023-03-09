@@ -1,0 +1,26 @@
+[project]
+name = "lspy"
+version = "0.0.1"
+dynamic = ['dependencies']
+
+[tool.vulcan]
+no-lock = true
+
+[tool.vulcan.dependencies]
+ujson = "~=5.7"
+
+[tool.setuptools.packages.find]
+include = ["lspy*"]
+
+
+[build-system]
+requires = ["vulcan-py~=2.0"]
+build-backend = "vulcan.build_backend"
+
+[tool.mypy]
+strict = true
+
+# pytest.ini
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
