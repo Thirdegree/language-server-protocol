@@ -10,7 +10,7 @@ no-lock = true
 ujson = "~=5.7"
 
 [tool.setuptools.packages.find]
-include = ["lspy*"]
+include = ["lsp*"]
 
 
 [build-system]
