@@ -84,8 +84,7 @@ class LanguageServer(ABC):
                             id=msg_id,
                             error=JsonRpcError(
                                 code=-32601,
-                                message=
-                                f"Method {msg.content['method']!r} not found"))
+                                message=f"Method {msg.content['method']!r} not found"))
                                 ))
                 continue
             try:
