@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from abc import ABC, abstractmethod
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
@@ -47,6 +48,8 @@ JSONRPC_VERSION: Literal["2.0"] = "2.0"
 
 LocationResponse = Location | list[Location] | list[LocationLink] | None
 
+log = logging.getLogger(__name__)
+
 
 def camel_to_snake(s: str) -> str:
     return ''.join(['_' + c.lower() if c.isupper() else c
@@ -91,6 +94,8 @@ class LanguageServer(ABC):
                             jsonrpc=JSONRPC_VERSION, id=msg_id,
                             result=result)))
             except (Exception, NotImplementedError, AssertionError) as e:
+                log.exception("Something happened in %s",
+                              msg.content['method'])
                 if msg_id is not None:
                     self.protocol.write_message(
                         Message(content=JsonRpcResponse(
@@ -117,7 +122,7 @@ class LanguageServer(ABC):
     @abstractmethod
     async def initialize(self, params: InitializeParams) -> InitializeResult:
         """
-        The initialize request is sent as the first request from the client to the server. 
+        The initialize request is sent as the first request from the client to the server.
         If the server receives a request or notification before the initialize request it should act as follows:
 
         * For a request the response should be an error with code: -32002. The message can be picked by the server.
@@ -140,9 +145,9 @@ class LanguageServer(ABC):
 
     async def exit(self, params: None) -> None:
         """
-        A notification to ask the server to exit its process. 
+        A notification to ask the server to exit its process.
         The server should exit with success code 0 if the shutdown request has been received before; otherwise with error code 1.
-        """
+        """  # noqa: E501
 
         if self._shutdown_received:
             exit(0)
@@ -152,7 +157,7 @@ class LanguageServer(ABC):
     async def text_document__declaration(
             self, params: DeclarationParams) -> LocationResponse:
         """
-        The go to declaration request is sent from the client to the server to resolve the 
+        The go to declaration request is sent from the client to the server to resolve the
         declaration location of a symbol at a given text document position.
         """
         pass
@@ -322,28 +327,29 @@ class LanguageServer(ABC):
     # notifications
 
     async def initialized(self, params: InitializedParams) -> None:
-        pass
+        log.info("Did initialized")
 
     async def text_document__did_open(
             self, params: DidOpenTextDocumentParams) -> None:
-        pass
+        log.info("Did text_document__did_open")
 
     async def text_document__did_change(
             self, params: DidChangeTextDocumentParams) -> None:
-        pass
+        log.info("Did text_document__did_change")
 
     async def text_document__will_save(
             self, params: WillSaveTextDocumentParams) -> None:
-        pass
+        log.info("Did text_document__will_save")
 
     async def text_document__will_save_wait_until(
             self, params: WillSaveTextDocumentParams) -> list[TextEdit] | None:
-        pass
+        log.info("Did text_document__will_save_wait_until")
+        raise NotImplementedError
 
     async def text_document__did_save(
             self, params: DidSaveTextDocumentParams) -> None:
-        pass
+        log.info("Did text_document__did_save")
 
     async def text_document__did_close(
             self, params: DidCloseTextDocumentParams) -> None:
-        pass
+        log.info("Did text_document__did_close")

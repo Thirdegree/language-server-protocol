@@ -10,6 +10,8 @@ import ujson as json
 
 from lsp.lsp.common import T_Message
 
+log = logging.getLogger(__name__)
+
 if TYPE_CHECKING:
     from _typeshed import ReadableBuffer
 
@@ -146,4 +148,7 @@ class LspProtocol(asyncio.BufferedProtocol):
         self.transport.write(bytes(msg))
 
     async def read_message(self) -> Message[JsonRpcRequest[Any]]:
+        """
+        Return the next availible JsonRpcRequest Message
+        """
         return await self.out_queue.get()
