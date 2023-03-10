@@ -17,7 +17,7 @@ Language Server Protocol Messages
 ---------------------------------
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    messages
    server
