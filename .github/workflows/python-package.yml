@@ -31,4 +31,4 @@ jobs:
         python -m pip install .
     - name: Run tests with tox
       run: |
-        tox -p
+        tox -p --parallel-no-spinner
