@@ -204,7 +204,7 @@ class WorkspaceFolder(MessageData):
 
 class Position(MessageData):
     line: int
-    charecter: int
+    character: int
 
 
 class Range(MessageData):
