@@ -8,38 +8,38 @@ from typing import Any, AsyncIterator, Awaitable, Callable, Literal, Self
 
 from lsp.lsp.common import Location, LocationLink
 from lsp.lsp.messages import (InitializedParams, InitializeParams,
-                               InitializeResult)
+                              InitializeResult)
 from lsp.lsp.server import (CallHierarchyIncomingCall,
-                             CallHierarchyIncomingCallsParams,
-                             CallHierarchyItem, CallHierarchyOutgoingCall,
-                             CallHierarchyOutgoingCallsParams,
-                             CallHierarchyPrepareParams, CodeAction,
-                             CodeActionParams, CodeLens, CodeLensParams,
-                             ColorInformation, Command, CompletionItem,
-                             CompletionList, CompletionParams,
-                             DeclarationParams, DefinitionParams,
-                             DidChangeTextDocumentParams,
-                             DidCloseTextDocumentParams,
-                             DidOpenTextDocumentParams,
-                             DidSaveTextDocumentParams, DocumentColorParams,
-                             DocumentFormattingParams, DocumentHighlight,
-                             DocumentHighlightParams, DocumentLink,
-                             DocumentLinkParams, DocumentSymbol,
-                             DocumentSymbolParam, ExecuteCommandParams,
-                             FoldingRange, FoldingRangeParams, Hover,
-                             HoverParams, ImplementationParams, InlayHint,
-                             InlayHintParams, InlineValue, InlineValueParams,
-                             Moniker, MonikerParams, ReferenceParams,
-                             SelectionRange, SelectionRangeParams,
-                             SemanticTokens, SemanticTokensDelta,
-                             SemanticTokensDeltaParams, SemanticTokensParams,
-                             SemanticTokensRangeParams, SignatureHelp,
-                             SignatureHelpParams, SymbolInformation, TextEdit,
-                             TypeDefinitionParams, TypeHierarchyItem,
-                             TypeHierarchyPrepareParams,
-                             TypeHierarchySubtypesParams,
-                             TypeHierarchySupertypesParams,
-                             WillSaveTextDocumentParams)
+                            CallHierarchyIncomingCallsParams,
+                            CallHierarchyItem, CallHierarchyOutgoingCall,
+                            CallHierarchyOutgoingCallsParams,
+                            CallHierarchyPrepareParams, CodeAction,
+                            CodeActionParams, CodeLens, CodeLensParams,
+                            ColorInformation, Command, CompletionItem,
+                            CompletionList, CompletionParams,
+                            DeclarationParams, DefinitionParams,
+                            DidChangeTextDocumentParams,
+                            DidCloseTextDocumentParams,
+                            DidOpenTextDocumentParams,
+                            DidSaveTextDocumentParams, DocumentColorParams,
+                            DocumentFormattingParams, DocumentHighlight,
+                            DocumentHighlightParams, DocumentLink,
+                            DocumentLinkParams, DocumentSymbol,
+                            DocumentSymbolParam, ExecuteCommandParams,
+                            FoldingRange, FoldingRangeParams, Hover,
+                            HoverParams, ImplementationParams, InlayHint,
+                            InlayHintParams, InlineValue, InlineValueParams,
+                            Moniker, MonikerParams, ReferenceParams,
+                            SelectionRange, SelectionRangeParams,
+                            SemanticTokens, SemanticTokensDelta,
+                            SemanticTokensDeltaParams, SemanticTokensParams,
+                            SemanticTokensRangeParams, SignatureHelp,
+                            SignatureHelpParams, SymbolInformation, TextEdit,
+                            TypeDefinitionParams, TypeHierarchyItem,
+                            TypeHierarchyPrepareParams,
+                            TypeHierarchySubtypesParams,
+                            TypeHierarchySupertypesParams,
+                            WillSaveTextDocumentParams)
 from lsp.protocol import JsonRpcError, JsonRpcResponse, LspProtocol, Message
 
 Json = dict[str, Any]
@@ -57,6 +57,7 @@ def camel_to_snake(s: str) -> str:
 class LanguageServer(ABC):
     protocol: LspProtocol = field(default_factory=LspProtocol)
     _serve_task: asyncio.Task[None] | None = None
+    _shutdown_received: bool = False
 
     def transform_method(self, method: str) -> str:
         left, _, right = method.partition('/')
@@ -115,13 +116,45 @@ class LanguageServer(ABC):
 
     @abstractmethod
     async def initialize(self, params: InitializeParams) -> InitializeResult:
+        """
+        The initialize request is sent as the first request from the client to the server. 
+        If the server receives a request or notification before the initialize request it should act as follows:
+
+        * For a request the response should be an error with code: -32002. The message can be picked by the server.
+        * Notifications should be dropped, except for the exit notification.
+          This will allow the exit of a server without an initialize request.
+
+        """
         raise NotImplementedError
 
     async def shutdown(self, params: None) -> None:
-        pass
+        """
+        The shutdown request is sent from the client to the server.
+        It asks the server to shut down, but to not exit (otherwise the response might not be delivered correctly to the client).
+        There is a separate :py:func:`exit` notification that asks the server to exit.
+        Clients must not send any notifications other than exit or requests to a server to which they have sent a shutdown request.
+        Clients should also wait with sending the exit notification until they have received a response from the shutdown request.
+        """  # noqa: E501
+
+        self._shutdown_received = True
+
+    async def exit(self, params: None) -> None:
+        """
+        A notification to ask the server to exit its process. 
+        The server should exit with success code 0 if the shutdown request has been received before; otherwise with error code 1.
+        """
+
+        if self._shutdown_received:
+            exit(0)
+        else:
+            exit(1)
 
     async def text_document__declaration(
             self, params: DeclarationParams) -> LocationResponse:
+        """
+        The go to declaration request is sent from the client to the server to resolve the 
+        declaration location of a symbol at a given text document position.
+        """
         pass
 
     async def text_document__definition(

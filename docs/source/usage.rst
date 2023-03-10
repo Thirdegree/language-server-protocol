@@ -15,13 +15,22 @@ To use Language Server Protocol, first install it using pip:
 Creating a simple language server
 ---------------------------------
 
-To create a simple language server, you need to override :py:func:`lsp.LanguageServer.initialize`. For example:
+In order to create a simple language server, override :py:func:`lsp.LanguageServer.initialize`. For example:
 
 .. code-block:: python
 
+   import asyncio
    from lsp import LanguageServer
    from lsp.lsp.messages import InitializeParams, InitializeResult 
+
+
    class SimpleLanguageServer(LanguageServer):
        async def Initialize(self, params: InitializeParams) -> InitializeResult: 
            return InitializeResult(capabilities={})
 
+   async def amain() -> None:
+       async with SimpleLanguageServer().listen('localhost', 5555) as server:
+           await server.wait()
+
+   if __name__ == '__main__':
+       asyncio.run(amain())

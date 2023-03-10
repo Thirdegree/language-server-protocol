@@ -3,7 +3,8 @@ API
 ===
 
 .. autoclass:: lsp.LanguageServer
-   :members:
+   :members: 
+   :member-order: bysource
 
 .. autoclass:: lsp.protocol.LspProtocol
    :members: write_message, read_message
