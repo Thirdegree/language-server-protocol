@@ -105,6 +105,11 @@ class Message(Generic[T_Content]):
 
 
 class LspProtocol(asyncio.BufferedProtocol):
+    """
+    Implement the `base protocol`_ for lanaguge server protocol messages.
+
+    .. _base protocol: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#baseProtocol
+    """  # noqa: E501
 
     def __init__(self) -> None:
         self.buffer = memoryview(bytearray(b'*' * 1024))
@@ -135,6 +140,9 @@ class LspProtocol(asyncio.BufferedProtocol):
         self.transport = transport
 
     def write_message(self, msg: Message[JsonRpcResponse[Any]]) -> None:
+        """
+        Write a jsonrpc :py:class:`Message`
+        """
         self.transport.write(bytes(msg))
 
     async def read_message(self) -> Message[JsonRpcRequest[Any]]:

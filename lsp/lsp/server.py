@@ -3,12 +3,12 @@ from __future__ import annotations
 from typing import Any, Literal, NotRequired, TypedDict
 
 from lsp.lsp.common import (URI, CodeActionKind, CodeActionTriggerKind,
-                             DocumentHighlightKind, DocumentUri, EmptyDict,
-                             FileOperationPatternKind, FoldingRangeKind,
-                             InsertTextMode, Location, MarkupKind, MonikerKind,
-                             Position, PositionEncodingKind, Range, SymbolKind,
-                             SymbolTag, UniquenessLevel,
-                             WorkDoneProgressOptions)
+                            DocumentHighlightKind, DocumentUri, EmptyDict,
+                            FileOperationPatternKind, FoldingRangeKind,
+                            InsertTextMode, Location, MarkupKind, MonikerKind,
+                            Position, PositionEncodingKind, Range, SymbolKind,
+                            SymbolTag, UniquenessLevel,
+                            WorkDoneProgressOptions)
 
 
 class FileOperationPatternOptions(TypedDict):
