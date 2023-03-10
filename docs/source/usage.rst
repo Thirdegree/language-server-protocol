@@ -29,7 +29,7 @@ In order to create a simple language server, override :py:func:`lsp.LanguageServ
            return InitializeResult(capabilities={})
 
    async def amain() -> None:
-       async with SimpleLanguageServer().listen('localhost', 5555) as server:
+       async with SimpleLanguageServer().listen() as server:
            await server.wait()
 
    if __name__ == '__main__':
