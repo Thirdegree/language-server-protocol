@@ -21,7 +21,7 @@ from lsp.lsp.server import (CodeAction, CodeActionParams, Command,
 logging.basicConfig(level='INFO')
 
 
-def WoRd_uNdEr_cUrSoR(line: str, char_pos: int) -> tuple[int, int, str]:
+def word_under_cursor(line: str, char_pos: int) -> tuple[int, int, str]:
     if char_pos >= len(line):
         return 0, 0, ""
     found = 0
