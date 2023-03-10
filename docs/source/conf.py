@@ -2,7 +2,7 @@
 
 # -- Project information
 
-project = 'Python Language Server'
+project = 'Language Server Protocol'
 copyright = '2023, Joel Christiansen'
 author = 'Joel Christiansen'
 
