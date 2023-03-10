@@ -60,6 +60,8 @@ def camel_to_snake(s: str) -> str:
 class LanguageServer(ABC):
     protocol: LspProtocol = field(default_factory=LspProtocol)
     _serve_task: asyncio.Task[None] | None = None
+    _netcat_task: asyncio.Task[None] | None = None
+    _listening_on: int | None = None
     _shutdown_received: bool = False
 
     def transform_method(self, method: str) -> str:
@@ -109,15 +111,25 @@ class LanguageServer(ABC):
         await self._serve_task
 
     @asynccontextmanager
-    async def serve(self, host: str, port: int) -> AsyncIterator[Self]:
+    async def serve(self, std: bool = True) -> AsyncIterator[Self]:
         async with await asyncio.get_event_loop().create_server(
-                lambda: self.protocol, host=host,
-                port=port) as server, asyncio.TaskGroup() as tg:
+                lambda: self.protocol,
+                host='localhost') as server, asyncio.TaskGroup() as tg:
             self._serve_task = tg.create_task(server.serve_forever())
+            self._listening_on = server.sockets[0].getsockname()[1]
+            assert self._listening_on is not None
+            if std:
+                self._netcat_task = tg.create_task(
+                    self._netcat(self._listening_on))
             handle = tg.create_task(self._handle_messages())
             yield self
             self._serve_task.cancel()
+            if self._netcat_task:
+                self._netcat_task.cancel()
             handle.cancel()
+
+    async def _netcat(self, port: int) -> None:
+        await asyncio.create_subprocess_exec('nc', 'localhost', str(port))
 
     @abstractmethod
     async def initialize(self, params: InitializeParams) -> InitializeResult:

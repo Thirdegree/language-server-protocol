@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import asyncio
+import logging
+from contextlib import suppress
 from dataclasses import dataclass
 from email.message import Message as EmailMessage
 from typing import (TYPE_CHECKING, Any, Generic, Literal, NotRequired, Self,

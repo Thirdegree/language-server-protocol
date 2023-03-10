@@ -29,16 +29,15 @@ class TestLanguageServer(LanguageServer):
 
 
 @pytest.fixture
-async def lsp_server_port(unused_tcp_port_factory: Callable[[], int]) -> int:
-    return unused_tcp_port_factory()
+async def lsp_server() -> AsyncIterable[TestLanguageServer]:
+    async with TestLanguageServer().serve(std=False) as server:
+        yield server
 
 
 @pytest.fixture
-async def lsp_server(
-        lsp_server_port: int) -> AsyncIterable[TestLanguageServer]:
-    async with TestLanguageServer().serve('localhost',
-                                          lsp_server_port) as server:
-        yield server
+async def lsp_server_port(lsp_server: TestLanguageServer) -> int:
+    assert lsp_server._listening_on is not None
+    return lsp_server._listening_on
 
 
 @pytest.fixture

@@ -12,8 +12,7 @@ class DummyLanguageServer(LanguageServer):
 
 
 async def amain() -> None:
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 5555
-    async with DummyLanguageServer().serve('localhost', port) as server:
+    async with DummyLanguageServer().serve() as server:
         await server.wait()
 
 
