@@ -1,5 +1,4 @@
 import asyncio
-import sys
 
 from lsp import LanguageServer
 from lsp.lsp.messages import InitializeParams, InitializeResult

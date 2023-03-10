@@ -1,6 +1,6 @@
 import asyncio
 from asyncio import StreamReader, StreamWriter
-from typing import AsyncIterable, Callable
+from typing import AsyncIterable
 
 import pytest
 
