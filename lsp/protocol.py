@@ -116,28 +116,38 @@ class LspProtocol(asyncio.BufferedProtocol):
     """  # noqa: E501
 
     def __init__(self) -> None:
-        self.buffer = memoryview(bytearray(b'*' * 1024))
+        self.buf_size = 1024
+        self.buffer = memoryview(bytearray(b'*' * self.buf_size))
         self.cursor = 0
         self.out_queue: asyncio.Queue[Message[
             JsonRpcRequest[Any]]] = asyncio.Queue()
         self.transport: asyncio.Transport
 
     def get_buffer(self, sizehint: int) -> ReadableBuffer:
-        # FIXME: we're assuming that we never have a message larger than 1024 bytes.
+        _ = sizehint
+        log.debug("get buffer, cursor: %s, buffer: %s", self.cursor,
+                  self.buf_size)
+        if self.cursor >= self.buf_size - 1:
+            self.double_buffer()
         return self.buffer[self.cursor:]
+
+    def double_buffer(self) -> None:
+        log.debug("Doubling buffer size, %s to %s", self.buf_size,
+                  self.buf_size * 2)
+        new_buf = memoryview(bytearray(b'*' * self.buf_size * 2))
+        new_buf[:len(self.buffer)] = self.buffer
+        self.buf_size = self.buf_size * 2
+        self.buffer = new_buf
 
     def buffer_updated(self, nbytes: int) -> None:
         # FIXME: wer're just kinda assuming that all invalid content is just incomplete
-        try:
+        self.cursor += nbytes
+        with suppress(ValueError):
             msg: Message[JsonRpcRequest[Any]]
-            read, msg = Message.parse(bytes(self.buffer[:self.cursor +
-                                                        nbytes]))
-            self.buffer[:self.cursor + nbytes -
-                        read] = self.buffer[read:self.cursor + nbytes]
+            read, msg = Message.parse(bytes(self.buffer[:self.cursor]))
+            self.buffer[:self.cursor - read] = self.buffer[read:self.cursor]
             self.out_queue.put_nowait(msg)
             self.cursor = 0
-        except ValueError:
-            self.cursor += nbytes
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
         assert isinstance(transport, asyncio.Transport)
