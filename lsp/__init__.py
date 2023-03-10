@@ -65,10 +65,8 @@ class LanguageServer(ABC):
     _shutdown_received: bool = False
 
     def transform_method(self, method: str) -> str:
-        left, _, right = method.partition('/')
-        if not right:
-            return camel_to_snake(left)
-        return f'{camel_to_snake(left)}__{camel_to_snake(right)}'
+        parts = method.split('/')
+        return '__'.join(camel_to_snake(p) for p in parts)
 
     async def _handle_messages(self) -> None:
         while True:
@@ -76,6 +74,8 @@ class LanguageServer(ABC):
             msg_id = msg.content.get('id')
             cb: Callable[[Json | None], Awaitable[Json]] | None = getattr(
                 self, self.transform_method(msg.content['method']), None)
+            log.debug("Found cb %s for method %s", cb,
+                      self.transform_method(msg.content['method']))
             if cb is None:
                 if msg_id is not None:
                     self.protocol.write_message(
@@ -84,7 +84,8 @@ class LanguageServer(ABC):
                             id=msg_id,
                             error=JsonRpcError(
                                 code=-32601,
-                                message=f"Method {msg.content['method']!r} not found"))
+                                message=
+                                f"Method {msg.content['method']!r} not found"))
                                 ))
                 continue
             try:

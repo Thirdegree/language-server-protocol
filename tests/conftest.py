@@ -6,7 +6,8 @@ import pytest
 
 from lsp import LanguageServer
 from lsp.lsp.messages import InitializeParams, InitializeResult
-from lsp.lsp.server import CodeAction, CodeActionParams, Command
+from lsp.lsp.server import (CodeAction, CodeActionParams, Command,
+                            SemanticTokens, SemanticTokensDeltaParams)
 
 
 class TestLanguageServer(LanguageServer):
@@ -19,13 +20,16 @@ class TestLanguageServer(LanguageServer):
         return params['a'] + params['b']
 
     async def text_document__code_action(
-            self,
-            params: CodeActionParams) -> list[Command | CodeAction] | None:
+            self, params: CodeActionParams) -> list[Command | CodeAction]:
         title = f"{params['range']['start']['line']}"
         title += f":{params['range']['start']['character']}"
         title += f"-{params['range']['end']['line']}"
         title += f":{params['range']['end']['character']}"
         return [CodeAction(title=title)]
+
+    async def text_document__semantic_tokens__full__delta(
+            self, params: SemanticTokensDeltaParams) -> SemanticTokens:
+        return SemanticTokens(data=[12, 3])
 
 
 @pytest.fixture

@@ -3,11 +3,12 @@ import os
 from asyncio import StreamReader, StreamWriter
 
 import pytest
+from conftest import TestLanguageServer
 
-from lsp import LanguageServer
 from lsp.lsp.common import DocumentUri, Position, Range, T_Message
 from lsp.lsp.messages import InitializeParams, InitializeResult
 from lsp.lsp.server import (CodeAction, CodeActionContext, CodeActionParams,
+                            SemanticTokens, SemanticTokensDeltaParams,
                             TextDocumentIdentifier)
 from lsp.protocol import JsonRpcRequest, JsonRpcResponse, Message
 
@@ -20,8 +21,8 @@ def request(method: str,
 
 @pytest.fixture
 async def initialized_lsp_server(
-        lsp_server: LanguageServer,
-        lsp_client: tuple[StreamReader, StreamWriter]) -> LanguageServer:
+        lsp_server: TestLanguageServer,
+        lsp_client: tuple[StreamReader, StreamWriter]) -> TestLanguageServer:
     reader, writer = lsp_client
     writer.write(
         bytes(
@@ -58,3 +59,21 @@ async def test_code_action_title(
     res = message.content.get('result')
     assert res is not None
     assert res[0]['title'] == '0:2-3:4'
+
+
+@pytest.mark.usefixtures('initialized_lsp_server')
+async def test_request_multiple_slashes(
+        lsp_client: tuple[StreamReader, StreamWriter]) -> None:
+    reader, writer = lsp_client
+    writer.write(
+        bytes(
+            request(
+                'textDocument/semanticTokens/full/delta',
+                SemanticTokensDeltaParams())))  # type: ignore[typeddict-item]
+    await writer.drain()
+
+    message: Message[JsonRpcResponse[SemanticTokens]]
+    _, message = Message.parse(await asyncio.wait_for(reader.read(1024), 1))
+    res = message.content.get('result')
+    assert res is not None
+    assert res['data'] == [12, 3]
