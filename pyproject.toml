@@ -1,7 +1,17 @@
 [project]
 name = "language_server_protocol"
-version = "0.0.3"
+authors = [{name="Joel Christiansen"}]
+version = "0.0.4"
 dynamic = ['dependencies']
+readme = "README.md"
+requires-python = ">=3.11"
+license = {file="LICENSE"}
+keywords = ['language', 'server', 'protocol']
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+]
 
 [tool.vulcan]
 no-lock = true
