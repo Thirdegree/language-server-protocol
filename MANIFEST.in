@@ -1,1 +1,2 @@
-include lsp/py.typed
+graft lsp
+global-exclude *.py[cod]

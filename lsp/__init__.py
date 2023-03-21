@@ -22,7 +22,7 @@ from lsp.lsp.server import (
     SemanticTokensRangeParams, SignatureHelp, SignatureHelpParams, SymbolInformation, TextEdit, TypeDefinitionParams,
     TypeHierarchyItem, TypeHierarchyPrepareParams, TypeHierarchySubtypesParams, TypeHierarchySupertypesParams,
     WillSaveTextDocumentParams)
-from lsp.protocol import JsonRpcError, JsonRpcResponse, LspProtocol, Message
+from lsp.protocol import (JsonRpcError, JsonRpcRequest, JsonRpcResponse, LspProtocol, Message)
 
 Json = dict[str, Any]
 JSONRPC_VERSION: Literal["2.0"] = "2.0"
@@ -38,7 +38,7 @@ def camel_to_snake(s: str) -> str:
 
 @dataclass
 class LanguageServer(ABC):
-    protocol: LspProtocol = field(default_factory=LspProtocol)
+    protocol: LspProtocol[JsonRpcRequest[Any]] = field(default_factory=LspProtocol)
     _serve_task: asyncio.Task[None] | None = None
     _netcat_task: asyncio.Task[None] | None = None
     _listening_on: int | None = None

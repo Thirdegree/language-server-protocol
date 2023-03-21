@@ -5,16 +5,13 @@ import logging
 from contextlib import suppress
 from dataclasses import dataclass
 from email.message import Message as EmailMessage
-from typing import (TYPE_CHECKING, Any, Generic, Literal, NotRequired, Self, TypedDict, TypeVar)
+from typing import Any, Generic, Literal, NotRequired, Self, TypedDict, TypeVar
 
 import ujson as json
 
 from lsp.lsp.common import T_Message
 
 log = logging.getLogger(__name__)
-
-if TYPE_CHECKING:
-    from _typeshed import ReadableBuffer
 
 JSONRPC_VERSION: Literal["2.0"] = "2.0"
 
@@ -104,7 +101,7 @@ class Message(Generic[T_Content]):
         return self._encoding  # type: ignore
 
 
-class LspProtocol(asyncio.BufferedProtocol):
+class LspProtocol(asyncio.BufferedProtocol, Generic[T_Content]):
     """
     Implement the `base protocol`_ for lanaguge server protocol messages.
 
@@ -115,10 +112,10 @@ class LspProtocol(asyncio.BufferedProtocol):
         self.buf_size = 1024
         self.buffer = memoryview(bytearray(b'*' * self.buf_size))
         self.cursor = 0
-        self.out_queue: asyncio.Queue[Message[JsonRpcRequest[Any]]] = asyncio.Queue()
-        self.transport: asyncio.Transport
+        self.out_queue: asyncio.Queue[Message[T_Content]] = asyncio.Queue()
+        self.transport: asyncio.WriteTransport
 
-    def get_buffer(self, sizehint: int) -> ReadableBuffer:
+    def get_buffer(self, sizehint: int) -> memoryview:
         _ = sizehint
         log.debug("get buffer, cursor: %s, buffer: %s", self.cursor, self.buf_size)
         if self.cursor >= self.buf_size - 1:
@@ -136,7 +133,7 @@ class LspProtocol(asyncio.BufferedProtocol):
         # FIXME: wer're just kinda assuming that all invalid content is just incomplete
         self.cursor += nbytes
         with suppress(ValueError):
-            msg: Message[JsonRpcRequest[Any]]
+            msg: Message[T_Content]
             read, msg = Message.parse(bytes(self.buffer[:self.cursor]))
             self.buffer[:self.cursor - read] = self.buffer[read:self.cursor]
             self.out_queue.put_nowait(msg)
@@ -146,13 +143,14 @@ class LspProtocol(asyncio.BufferedProtocol):
         assert isinstance(transport, asyncio.Transport)
         self.transport = transport
 
-    def write_message(self, msg: Message[JsonRpcResponse[Any]]) -> None:
+    def write_message(self, msg: Message[JsonRpcResponse[Any] | JsonRpcRequest[Any]]) -> None:
         """
         Write a jsonrpc :py:class:`Message`
         """
+        log.debug("Writing message %s", msg)
         self.transport.write(bytes(msg))
 
-    async def read_message(self) -> Message[JsonRpcRequest[Any]]:
+    async def read_message(self) -> Message[T_Content]:
         """
         Return the next availible JsonRpcRequest Message
         """

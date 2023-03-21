@@ -2,7 +2,7 @@
 name = "language_server_protocol"
 authors = [{name="Joel Christiansen"}]
 version = "0.0.7"
-dynamic = ['dependencies']
+dynamic = ['dependencies', 'optional-dependencies']
 readme = "README.md"
 requires-python = ">=3.11"
 license = {file="LICENSE"}
@@ -18,11 +18,17 @@ Documentation="https://language-server-protocol.readthedocs.io/en/latest/index.h
 github="https://github.com/Thirdegree/language-server-protocol"
 Pypi="https://pypi.org/project/language-server-protocol/"
 
+[project.scripts]
+lspclient="lsp.client.cli:main"
+
 [tool.vulcan]
 no-lock = true
 
 [tool.vulcan.dependencies]
 ujson = "~=5.7"
+
+[tool.vulcan.extras]
+cli = ["click~=8.1"]
 
 [tool.setuptools.packages.find]
 include = ["lsp*"]
