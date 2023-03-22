@@ -10,37 +10,25 @@ from typing import Any, AsyncIterator, Awaitable, Callable, Literal, Self
 from lsp.lsp.common import Location, LocationLink
 from lsp.lsp.messages import (InitializedParams, InitializeParams,
                               InitializeResult)
-from lsp.lsp.server import (CallHierarchyIncomingCall,
-                            CallHierarchyIncomingCallsParams,
-                            CallHierarchyItem, CallHierarchyOutgoingCall,
-                            CallHierarchyOutgoingCallsParams,
-                            CallHierarchyPrepareParams, CodeAction,
-                            CodeActionParams, CodeLens, CodeLensParams,
-                            ColorInformation, Command, CompletionItem,
-                            CompletionList, CompletionParams,
-                            DeclarationParams, DefinitionParams,
-                            DidChangeTextDocumentParams,
-                            DidCloseTextDocumentParams,
-                            DidOpenTextDocumentParams,
-                            DidSaveTextDocumentParams, DocumentColorParams,
-                            DocumentFormattingParams, DocumentHighlight,
-                            DocumentHighlightParams, DocumentLink,
-                            DocumentLinkParams, DocumentSymbol,
-                            DocumentSymbolParam, ExecuteCommandParams,
-                            FoldingRange, FoldingRangeParams, Hover,
-                            HoverParams, ImplementationParams, InlayHint,
-                            InlayHintParams, InlineValue, InlineValueParams,
-                            Moniker, MonikerParams, ReferenceParams,
-                            SelectionRange, SelectionRangeParams,
-                            SemanticTokens, SemanticTokensDelta,
-                            SemanticTokensDeltaParams, SemanticTokensParams,
-                            SemanticTokensRangeParams, SignatureHelp,
-                            SignatureHelpParams, SymbolInformation, TextEdit,
-                            TypeDefinitionParams, TypeHierarchyItem,
-                            TypeHierarchyPrepareParams,
-                            TypeHierarchySubtypesParams,
-                            TypeHierarchySupertypesParams,
-                            WillSaveTextDocumentParams)
+from lsp.lsp.server import (
+    CallHierarchyIncomingCall, CallHierarchyIncomingCallsParams,
+    CallHierarchyItem, CallHierarchyOutgoingCall,
+    CallHierarchyOutgoingCallsParams, CallHierarchyPrepareParams, CodeAction,
+    CodeActionParams, CodeLens, CodeLensParams, ColorInformation, Command,
+    CompletionItem, CompletionList, CompletionParams, DeclarationParams,
+    DefinitionParams, DidChangeTextDocumentParams, DidCloseTextDocumentParams,
+    DidOpenTextDocumentParams, DidSaveTextDocumentParams, DocumentColorParams,
+    DocumentFormattingParams, DocumentHighlight, DocumentHighlightParams,
+    DocumentLink, DocumentLinkParams, DocumentSymbol, DocumentSymbolParam,
+    ExecuteCommandParams, FoldingRange, FoldingRangeParams, Hover, HoverParams,
+    ImplementationParams, InlayHint, InlayHintParams, InlineValue,
+    InlineValueParams, Moniker, MonikerParams, ReferenceParams, SelectionRange,
+    SelectionRangeParams, SemanticTokens, SemanticTokensDelta,
+    SemanticTokensDeltaParams, SemanticTokensParams, SemanticTokensRangeParams,
+    SignatureHelp, SignatureHelpParams, SymbolInformation, TextEdit,
+    TypeDefinitionParams, TypeHierarchyItem, TypeHierarchyPrepareParams,
+    TypeHierarchySubtypesParams, TypeHierarchySupertypesParams,
+    WillSaveTextDocumentParams)
 from lsp.protocol import JsonRpcError, JsonRpcResponse, LspProtocol, Message
 
 Json = dict[str, Any]
@@ -111,9 +99,11 @@ class LanguageServer(ABC):
         await self._serve_task
 
     @asynccontextmanager
-    async def serve(self, std: bool = True) -> AsyncIterator[Self]:
+    async def serve(self,
+                    std: bool = True,
+                    port: int = 0) -> AsyncIterator[Self]:
         async with await asyncio.get_event_loop().create_server(
-                lambda: self.protocol,
+                lambda: self.protocol, port=port,
                 host='localhost') as server, asyncio.TaskGroup() as tg:
             self._serve_task = tg.create_task(server.serve_forever())
             self._listening_on = server.sockets[0].getsockname()[1]
