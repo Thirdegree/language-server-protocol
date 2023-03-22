@@ -4,18 +4,18 @@ from typing import Any, Literal, NotRequired, TypedDict
 
 from lsp.lsp.common import (URI, CodeActionKind, CodeActionTriggerKind, DocumentHighlightKind, DocumentUri, EmptyDict,
                             FileOperationPatternKind, FoldingRangeKind, InsertTextMode, Location, MarkupKind,
-                            MonikerKind, Position, PositionEncodingKind, Range, SymbolKind, SymbolTag, UniquenessLevel,
-                            WorkDoneProgressOptions)
+                            MessageData, MonikerKind, Position, PositionEncodingKind, Range, SymbolKind, SymbolTag,
+                            UniquenessLevel, WorkDoneProgressOptions, WorkspaceFolder)
 
 
-class FileOperationPatternOptions(TypedDict):
+class FileOperationPatternOptions(MessageData):
     #
     # The pattern should be matched ignoring casing.
     #
     ignoreCase: NotRequired[bool]
 
 
-class FileOperationPattern(TypedDict):
+class FileOperationPattern(MessageData):
     #
     # The glob pattern to match. Glob patterns can have the following syntax:
     # - `*` to match one or more characters in a path segment
@@ -44,7 +44,7 @@ class FileOperationPattern(TypedDict):
     options: NotRequired[FileOperationPatternOptions]
 
 
-class FileOperationFilter(TypedDict):
+class FileOperationFilter(MessageData):
     #
     # A Uri like `file` or `untitled`.
     #
@@ -56,14 +56,14 @@ class FileOperationFilter(TypedDict):
     pattern: FileOperationPattern
 
 
-class FileOperationRegistrationOptions(TypedDict):
+class FileOperationRegistrationOptions(MessageData):
     #
     # The actual filters.
     #
     filters: list[FileOperationFilter]
 
 
-class ServerCapabilitiesWorkspaceFileOperations(TypedDict):
+class ServerCapabilitiesWorkspaceFileOperations(MessageData):
     #
     # The server is interested in receiving didCreateFiles
     # notifications.
@@ -99,7 +99,7 @@ class ServerCapabilitiesWorkspaceFileOperations(TypedDict):
     willDelete: NotRequired[FileOperationRegistrationOptions]
 
 
-class WorkspaceFoldersServerCapabilities(TypedDict):
+class WorkspaceFoldersServerCapabilities(MessageData):
     #
     # The server has support for workspace folders
     #
@@ -117,7 +117,7 @@ class WorkspaceFoldersServerCapabilities(TypedDict):
     changeNotifications: NotRequired[str | bool]
 
 
-class ServerCapabilitiesWorkspace(TypedDict):
+class ServerCapabilitiesWorkspace(MessageData):
     #
     # The server supports workspace folder.
     #
@@ -137,7 +137,7 @@ class ServerCapabilitiesWorkspace(TypedDict):
 TextDocumentSyncKind = Literal[0, 1, 2]
 
 
-class TextDocumentSyncOptions(TypedDict):
+class TextDocumentSyncOptions(MessageData):
     #
     # Open and close notifications are sent to the server. If omitted open
     # close notifications should not be sent.
@@ -153,11 +153,11 @@ class TextDocumentSyncOptions(TypedDict):
     change: NotRequired[TextDocumentSyncKind]
 
 
-class NotebookDocumentSyncOptionsNotebookSelectorCells(TypedDict):
+class NotebookDocumentSyncOptionsNotebookSelectorCells(MessageData):
     langugage: str
 
 
-class NotebookDocumentFilterRequireScheme(TypedDict):
+class NotebookDocumentFilterRequireScheme(MessageData):
     #  The type of the enclosing notebook.
     notebookType: NotRequired[str]
 
@@ -168,7 +168,7 @@ class NotebookDocumentFilterRequireScheme(TypedDict):
     pattern: NotRequired[str]
 
 
-class NotebookDocumentFilterRequirePattern(TypedDict):
+class NotebookDocumentFilterRequirePattern(MessageData):
     #  The type of the enclosing notebook.
     notebookType: NotRequired[str]
 
@@ -179,7 +179,7 @@ class NotebookDocumentFilterRequirePattern(TypedDict):
     pattern: str
 
 
-class NotebookDocumentFilterRequireNotebookType(TypedDict):
+class NotebookDocumentFilterRequireNotebookType(MessageData):
     #  The type of the enclosing notebook.
     notebookType: str
 
@@ -195,7 +195,7 @@ NotebookDocumentFilter = (NotebookDocumentFilterRequireScheme
                           | NotebookDocumentFilterRequirePattern)
 
 
-class NotebookDocumentSyncOptionsNotebookSelectorOptionalNotebook(TypedDict):
+class NotebookDocumentSyncOptionsNotebookSelectorOptionalNotebook(MessageData):
     #
     # The notebook to be synced. If a string
     # value is provided it matches against the
@@ -209,7 +209,7 @@ class NotebookDocumentSyncOptionsNotebookSelectorOptionalNotebook(TypedDict):
     cells: list[NotebookDocumentSyncOptionsNotebookSelectorCells]
 
 
-class NotebookDocumentSyncOptionsNotebookSelectorOptionalCells(TypedDict):
+class NotebookDocumentSyncOptionsNotebookSelectorOptionalCells(MessageData):
     #
     # The notebook to be synced. If a string
     # value is provided it matches against the
@@ -227,7 +227,7 @@ NotebookSelector = (NotebookDocumentSyncOptionsNotebookSelectorOptionalCells
                     | NotebookDocumentSyncOptionsNotebookSelectorOptionalNotebook)
 
 
-class NotebookDocumentSyncOptions(TypedDict):
+class NotebookDocumentSyncOptions(MessageData):
     #
     # The notebooks to be synced
     #
@@ -240,7 +240,7 @@ class NotebookDocumentSyncOptions(TypedDict):
     save: NotRequired[bool]
 
 
-class StaticRegistrationOptions(TypedDict):
+class StaticRegistrationOptions(MessageData):
     #
     # The id used to register the request. The id can be used to deregister
     # the request again. See also Registration#id.
@@ -252,7 +252,7 @@ class NotebookDocumentSyncRegistrationOptions(NotebookDocumentSyncOptions, Stati
     pass
 
 
-class CompletionOptionsCompletionItem(TypedDict):
+class CompletionOptionsCompletionItem(MessageData):
     #
     # The server has support for completion item label
     # details (see also `CompletionItemLabelDetails`) when receiving
@@ -334,7 +334,7 @@ class DeclarationOptions(WorkDoneProgressOptions):
     pass
 
 
-class DocumentFilter(TypedDict):
+class DocumentFilter(MessageData):
     #
     # A language id, like `typescript`.
     #
@@ -366,7 +366,7 @@ class DocumentFilter(TypedDict):
 DocumentSelector = list[DocumentFilter]
 
 
-class TextDocumentRegistrationOptions(TypedDict):
+class TextDocumentRegistrationOptions(MessageData):
     #
     # A document selector to identify the scope of the registration. If set to
     # null the document selector provided on the client side will be used.
@@ -466,7 +466,7 @@ class DocumentRangeFormattingOptions(WorkDoneProgressOptions):
     pass
 
 
-class DocumentOnTypeFormattingOptions(TypedDict):
+class DocumentOnTypeFormattingOptions(MessageData):
     #
     # A character on which formatting should be triggered, like `{`.
     #
@@ -528,7 +528,7 @@ class SemanticTokensOptionsFull(WorkDoneProgressOptions):
     delta: NotRequired[bool]
 
 
-class SemanticTokensLegend(TypedDict):
+class SemanticTokensLegend(MessageData):
     #
     # The token types a server uses.
     #
@@ -632,7 +632,7 @@ class DiagnosticRegistrationOptions(TextDocumentRegistrationOptions, DiagnosticO
     pass
 
 
-class ServerCapabilities(TypedDict):
+class ServerCapabilities(MessageData):
 
     #
     # The position encoding the server picked from the encodings offered
@@ -855,7 +855,7 @@ class ServerCapabilities(TypedDict):
     experimental: NotRequired[Any]
 
 
-class TextDocumentItem(TypedDict):
+class TextDocumentItem(MessageData):
     #
     # The text document's URI.
     #
@@ -878,14 +878,14 @@ class TextDocumentItem(TypedDict):
     text: str
 
 
-class DidOpenTextDocumentParams(TypedDict):
+class DidOpenTextDocumentParams(MessageData):
     #
     # The document that was opened.
     #
     textDocument: TextDocumentItem
 
 
-class TextDocumentIdentifier(TypedDict):
+class TextDocumentIdentifier(MessageData):
     #
     # The text document's URI.
     #
@@ -902,11 +902,11 @@ class VersionedTextDocumentIdentifier(TextDocumentIdentifier):
     version: int
 
 
-class TextDocumentContentChangeEventSimple(TypedDict):
+class TextDocumentContentChangeEventSimple(MessageData):
     text: str
 
 
-class TextDocumentContentChangeEventRange(TypedDict):
+class TextDocumentContentChangeEventRange(MessageData):
     #
     # The range of the document that changed.
     #
@@ -928,7 +928,7 @@ class TextDocumentContentChangeEventRange(TypedDict):
 TextDocumentContentChangeEvent = TextDocumentContentChangeEventRange | TextDocumentContentChangeEventSimple
 
 
-class DidChangeTextDocumentParams(TypedDict):
+class DidChangeTextDocumentParams(MessageData):
     #
     # The document that did change. The version number points
     # to the version after all provided content changes have
@@ -974,7 +974,7 @@ TextDocumentSaveReason = Literal[
 ]
 
 
-class WillSaveTextDocumentParams(TypedDict):
+class WillSaveTextDocumentParams(MessageData):
     #
     # The document that will be saved.
     #
@@ -986,7 +986,7 @@ class WillSaveTextDocumentParams(TypedDict):
     reason: TextDocumentSaveReason
 
 
-class TextEdit(TypedDict):
+class TextEdit(MessageData):
     #
     # The range of the text document to be manipulated. To insert
     # text into a document create a range where start === end.
@@ -1000,7 +1000,7 @@ class TextEdit(TypedDict):
     newText: str
 
 
-class DidSaveTextDocumentParams(TypedDict):
+class DidSaveTextDocumentParams(MessageData):
     #
     # The document that was saved.
     #
@@ -1013,14 +1013,14 @@ class DidSaveTextDocumentParams(TypedDict):
     text: NotRequired[str]
 
 
-class DidCloseTextDocumentParams(TypedDict):
+class DidCloseTextDocumentParams(MessageData):
     #
     # The document that was closed.
     #
     textDocument: TextDocumentIdentifier
 
 
-class TextDocumentPositionParams(TypedDict):
+class TextDocumentPositionParams(MessageData):
     #
     # The text document.
     #
@@ -1035,14 +1035,14 @@ class TextDocumentPositionParams(TypedDict):
 ProgressToken = int | str
 
 
-class WorkDoneProgressParams(TypedDict):
+class WorkDoneProgressParams(MessageData):
     #
     # An optional token that a server can use to report work done progress.
     #
     workDoneToken: NotRequired[ProgressToken]
 
 
-class PartialResultParams(TypedDict):
+class PartialResultParams(MessageData):
     #
     # An optional token that a server can use to report partial results (e.g.
     # streaming) to the client.
@@ -1066,7 +1066,7 @@ class ImplementationParams(TextDocumentPositionParams, WorkDoneProgressParams, P
     pass
 
 
-class ReferenceContext(TypedDict):
+class ReferenceContext(MessageData):
     #
     # Include the declaration of the current symbol.
     #
@@ -1081,7 +1081,7 @@ class CallHierarchyPrepareParams(TextDocumentPositionParams, WorkDoneProgressPar
     pass
 
 
-class CallHierarchyItem(TypedDict):
+class CallHierarchyItem(MessageData):
     #
     # The name of this item.
     #
@@ -1138,7 +1138,7 @@ class CallHierarchyIncomingCallsParams(WorkDoneProgressParams, PartialResultPara
     item: CallHierarchyItem
 
 
-class CallHierarchyOutgoingCall(TypedDict):
+class CallHierarchyOutgoingCall(MessageData):
 
     #
     # The item that is called.
@@ -1156,7 +1156,7 @@ class CallHierarchyOutgoingCallsParams(WorkDoneProgressParams, PartialResultPara
     item: CallHierarchyItem
 
 
-class TypeHierarchyItem(TypedDict):
+class TypeHierarchyItem(MessageData):
     #
     # The name of this item.
     #
@@ -1220,7 +1220,7 @@ class DocumentHighlightParams(TextDocumentPositionParams, WorkDoneProgressParams
     pass
 
 
-class DocumentHighlight(TypedDict):
+class DocumentHighlight(MessageData):
     #
     # The range this highlight applies to.
     #
@@ -1236,7 +1236,7 @@ class DocumentLinkParams(WorkDoneProgressParams, PartialResultParams):
     textDocument: TextDocumentIdentifier
 
 
-class DocumentLink(TypedDict):
+class DocumentLink(MessageData):
     #
     # The range this link applies to.
     #
@@ -1270,7 +1270,7 @@ class HoverParams(TextDocumentPositionParams, WorkDoneProgressParams):
     pass
 
 
-class MarkedStringDict(TypedDict):
+class MarkedStringDict(MessageData):
     lanaguge: str
     value: str
 
@@ -1278,7 +1278,7 @@ class MarkedStringDict(TypedDict):
 MarkedString = str | MarkedStringDict
 
 
-class MarkupContent(TypedDict):
+class MarkupContent(MessageData):
     #
     # The type of the Markup
     #
@@ -1290,7 +1290,7 @@ class MarkupContent(TypedDict):
     value: str
 
 
-class Hover(TypedDict):
+class Hover(MessageData):
     #
     # The hover's content
     #
@@ -1303,11 +1303,11 @@ class Hover(TypedDict):
     range: NotRequired[Range]
 
 
-class CodeLensParams(TypedDict):
+class CodeLensParams(MessageData):
     textDocument: TextDocumentIdentifier
 
 
-class Command(TypedDict):
+class Command(MessageData):
     #
     # Title of the command, like `save`.
     #
@@ -1323,7 +1323,7 @@ class Command(TypedDict):
     arguments: NotRequired[list[Any]]
 
 
-class CodeLens(TypedDict):
+class CodeLens(MessageData):
     #
     # The range in which this code lens is valid. Should only span a single
     # line.
@@ -1345,7 +1345,7 @@ class FoldingRangeParams(WorkDoneProgressParams, PartialResultParams):
     textDocument: TextDocumentIdentifier
 
 
-class FoldingRange(TypedDict):
+class FoldingRange(MessageData):
 
     #
     # The zero-based start line of the range to fold. The folded area starts
@@ -1404,7 +1404,7 @@ class SelectionRangeParams(WorkDoneProgressParams, PartialResultParams):
     positions: list[Position]
 
 
-class SelectionRange(TypedDict):
+class SelectionRange(MessageData):
     #
     # The [range](#Range) of this selection range.
     #
@@ -1424,7 +1424,7 @@ class DocumentSymbolParam(WorkDoneProgressParams, PartialResultParams):
     textDocument: TextDocumentIdentifier
 
 
-class DocumentSymbol(TypedDict):
+class DocumentSymbol(MessageData):
     #
     # The name of this symbol. Will be displayed in the user interface and
     # therefore must not be an empty str or a string only consisting of
@@ -1476,7 +1476,7 @@ class DocumentSymbol(TypedDict):
     children: NotRequired[list[DocumentSymbol]]
 
 
-class SymbolInformation(TypedDict):
+class SymbolInformation(MessageData):
     #
     # The name of this symbol.
     #
@@ -1530,7 +1530,7 @@ class SemanticTokensParams(WorkDoneProgressParams, PartialResultParams):
     textDocument: TextDocumentIdentifier
 
 
-class SemanticTokens(TypedDict):
+class SemanticTokens(MessageData):
     #
     # An optional result id. If provided and clients support delta updating
     # the client will include the result id in the next semantic token request.
@@ -1558,7 +1558,7 @@ class SemanticTokensDeltaParams(WorkDoneProgressParams, PartialResultParams):
     previousResultId: str
 
 
-class SemanticTokensDelta(TypedDict):
+class SemanticTokensDelta(MessageData):
     resultId: NotRequired[str]
     #
     # The semantic token edits to transform a previous result into a new
@@ -1567,7 +1567,7 @@ class SemanticTokensDelta(TypedDict):
     edits: list[SemanticTokensEdit]
 
 
-class SemanticTokensEdit(TypedDict):
+class SemanticTokensEdit(MessageData):
     #
     # The start offset of the edit.
     #
@@ -1596,7 +1596,7 @@ class SemanticTokensRangeParams(WorkDoneProgressParams, PartialResultParams):
     range: Range
 
 
-class InlineValueContext(TypedDict):
+class InlineValueContext(MessageData):
     #
     # The stack frame (as a DAP Id) where the execution has stopped.
     #
@@ -1628,7 +1628,7 @@ class InlineValueParams(WorkDoneProgressParams):
     context: InlineValueContext
 
 
-class InlineValueText(TypedDict):
+class InlineValueText(MessageData):
     #
     # The document range for which the inline value applies.
     #
@@ -1640,7 +1640,7 @@ class InlineValueText(TypedDict):
     text: str
 
 
-class InlineValueVariableLookup(TypedDict):
+class InlineValueVariableLookup(MessageData):
     #
     # The document range for which the inline value applies.
     # The range is used to extract the variable name from the underlying
@@ -1659,7 +1659,7 @@ class InlineValueVariableLookup(TypedDict):
     caseSensitiveLookup: bool
 
 
-class InlineValueEvaluatableExpression(TypedDict):
+class InlineValueEvaluatableExpression(MessageData):
     #
     # The document range for which the inline value applies.
     # The range is used to extract the evaluatable expression from the
@@ -1698,7 +1698,7 @@ class InlayHintParams(WorkDoneProgressParams):
     range: Range
 
 
-class InlayHintLabelPart(TypedDict):
+class InlayHintLabelPart(MessageData):
 
     #
     # The value of this label part.
@@ -1749,7 +1749,7 @@ InlayHintKind = Literal[
 ]
 
 
-class InlayHint(TypedDict):
+class InlayHint(MessageData):
 
     #
     # The position of this hint.
@@ -1819,7 +1819,7 @@ class MonikerParams(TextDocumentPositionParams, WorkDoneProgressParams, PartialR
     pass
 
 
-class Moniker(TypedDict):
+class Moniker(MessageData):
     #
     # The scheme of the moniker. For example tsc or .Net
     #
@@ -1862,7 +1862,7 @@ CompletionTriggerKind = Literal[
 ]
 
 
-class CompletionContext(TypedDict):
+class CompletionContext(MessageData):
     #
     # How the completion was triggered.
     #
@@ -1885,7 +1885,7 @@ class CompletionParams(TextDocumentPositionParams, WorkDoneProgressParams, Parti
     context: NotRequired[CompletionContext]
 
 
-class CompletionListItemDefaultsEditRange(TypedDict):
+class CompletionListItemDefaultsEditRange(MessageData):
     insert: Range
     replace: Range
 
@@ -1904,7 +1904,7 @@ InsertTextFormat = Literal[
 ]
 
 
-class CompletionListItemDefaults(TypedDict):
+class CompletionListItemDefaults(MessageData):
     #
     # A default commit character set.
     #
@@ -1941,7 +1941,7 @@ class CompletionListItemDefaults(TypedDict):
     data: NotRequired[Any]
 
 
-class CompletionItemLabelDetails(TypedDict):
+class CompletionItemLabelDetails(MessageData):
 
     #
     # An optional string which is rendered less prominently directly after
@@ -1989,7 +1989,7 @@ CompletionItemTag = Literal[1,  # Deprecated
                             ]
 
 
-class InsertReplaceEdit(TypedDict):
+class InsertReplaceEdit(MessageData):
     #
     # The string to be inserted.
     #
@@ -2006,7 +2006,7 @@ class InsertReplaceEdit(TypedDict):
     replace: Range
 
 
-class CompletionItem(TypedDict):
+class CompletionItem(MessageData):
 
     #
     # The label of this completion item.
@@ -2189,7 +2189,7 @@ class CompletionItem(TypedDict):
     data: NotRequired[Any]
 
 
-class CompletionList(TypedDict):
+class CompletionList(MessageData):
     #
     # This list is not complete. Further typing should result in recomputing
     # this list.
@@ -2222,7 +2222,7 @@ class CompletionList(TypedDict):
     items: list[CompletionItem]
 
 
-class ParameterInformation(TypedDict):
+class ParameterInformation(MessageData):
 
     #
     # The label of this parameter information.
@@ -2245,7 +2245,7 @@ class ParameterInformation(TypedDict):
     documentation: NotRequired[str | MarkupContent]
 
 
-class SignatureInformation(TypedDict):
+class SignatureInformation(MessageData):
     #
     # The label of this signature. Will be shown in
     # the UI.
@@ -2273,7 +2273,7 @@ class SignatureInformation(TypedDict):
     activeParameter: NotRequired[int]
 
 
-class SignatureHelp(TypedDict):
+class SignatureHelp(MessageData):
     #
     # One or more signatures. If no signatures are available the signature help
     # request should return `null`.
@@ -2322,7 +2322,7 @@ SignatureHelpTriggerKind = Literal[
 ]
 
 
-class SignatureHelpContext(TypedDict):
+class SignatureHelpContext(MessageData):
     #
     # Action that caused signature help to be triggered.
     #
@@ -2384,7 +2384,7 @@ DiagnosticSeverity = Literal[  #
 ]
 
 
-class CodeDescription(TypedDict):
+class CodeDescription(MessageData):
     #
     # An URI to open with more information about the diagnostic error.
     #
@@ -2407,7 +2407,7 @@ DiagnosticTag = Literal[  #
 ]
 
 
-class DiagnosticRelatedInformation(TypedDict):
+class DiagnosticRelatedInformation(MessageData):
     #
     # The location of this related diagnostic information.
     #
@@ -2419,7 +2419,7 @@ class DiagnosticRelatedInformation(TypedDict):
     message: str
 
 
-class Diagnostic(TypedDict):
+class Diagnostic(MessageData):
     #
     # The range at which the message applies.
     #
@@ -2477,7 +2477,7 @@ class Diagnostic(TypedDict):
     data: NotRequired[Any]
 
 
-class CodeActionContext(TypedDict):
+class CodeActionContext(MessageData):
     #
     # An array of diagnostics known on the client side overlapping the range
     # provided to the `textDocument/codeAction` request. They are provided so
@@ -2521,7 +2521,7 @@ class CodeActionParams(WorkDoneProgressParams, PartialResultParams):
     context: CodeActionContext
 
 
-class Color(TypedDict):
+class Color(MessageData):
 
     #
     # The red component of this color in the range [0-1].
@@ -2560,7 +2560,7 @@ class DocumentColorParams(WorkDoneProgressParams, PartialResultParams):
     color: Color
 
 
-class ColorInformation(TypedDict):
+class ColorInformation(MessageData):
     #
     # The range in the document where this color appears.
     #
@@ -2572,7 +2572,7 @@ class ColorInformation(TypedDict):
     color: Color
 
 
-class FormattingOptions(TypedDict):
+class FormattingOptions(MessageData):
     #
     # Size of a tab in spaces.
     #
@@ -2637,7 +2637,7 @@ class ExecuteCommandParams(WorkDoneProgressParams):
 ChangeAnnotationIdentifier = str
 
 
-class ChangeAnnotation(TypedDict):
+class ChangeAnnotation(MessageData):
     #
     # A human-readable string describing the actual change. The string
     # is rendered prominent in the user interface.
@@ -2679,7 +2679,7 @@ class AnnotatedTextEdit(TextEdit):
     annotationId: ChangeAnnotationIdentifier
 
 
-class TextDocumentEdit(TypedDict):
+class TextDocumentEdit(MessageData):
     #
     # The text document to change.
     #
@@ -2694,7 +2694,7 @@ class TextDocumentEdit(TypedDict):
     edits: list[TextEdit | AnnotatedTextEdit]
 
 
-class CreateFileOptions(TypedDict):
+class CreateFileOptions(MessageData):
     #
     # Overwrite existing file. Overwrite wins over `ignoreIfExists`
     #
@@ -2706,7 +2706,7 @@ class CreateFileOptions(TypedDict):
     ignoreIfExists: NotRequired[bool]
 
 
-class CreateFile(TypedDict):
+class CreateFile(MessageData):
     #
     # A create
     #
@@ -2730,7 +2730,7 @@ class CreateFile(TypedDict):
     annotationId: NotRequired[ChangeAnnotationIdentifier]
 
 
-class RenameFileOptions(TypedDict):
+class RenameFileOptions(MessageData):
     #
     # Overwrite target if existing. Overwrite wins over `ignoreIfExists`
     #
@@ -2742,7 +2742,7 @@ class RenameFileOptions(TypedDict):
     ignoreIfExists: NotRequired[bool]
 
 
-class RenameFile(TypedDict):
+class RenameFile(MessageData):
     #
     # A rename
     #
@@ -2771,7 +2771,7 @@ class RenameFile(TypedDict):
     annotationId: NotRequired[ChangeAnnotationIdentifier]
 
 
-class DeleteFileOptions(TypedDict):
+class DeleteFileOptions(MessageData):
     #
     # Delete the content recursively if a folder is denoted.
     #
@@ -2783,7 +2783,7 @@ class DeleteFileOptions(TypedDict):
     ignoreIfNotExists: NotRequired[bool]
 
 
-class DeleteFile(TypedDict):
+class DeleteFile(MessageData):
     #
     # A delete
     #
@@ -2807,7 +2807,7 @@ class DeleteFile(TypedDict):
     annotationId: NotRequired[ChangeAnnotationIdentifier]
 
 
-class WorkspaceEdit(TypedDict):
+class WorkspaceEdit(MessageData):
     #
     # Holds changes to existing resources.
     #
@@ -2844,7 +2844,7 @@ class WorkspaceEdit(TypedDict):
     changeAnnotations: NotRequired[dict[ChangeAnnotationIdentifier, ChangeAnnotation]]
 
 
-class CodeActionDisabled(TypedDict):
+class CodeActionDisabled(MessageData):
 
     #
     # Human readable description of why the code action is currently
@@ -2855,7 +2855,7 @@ class CodeActionDisabled(TypedDict):
     reason: str
 
 
-class CodeAction(TypedDict):
+class CodeAction(MessageData):
 
     #
     # A short, human-readable, title for this code action.
@@ -2926,3 +2926,279 @@ class CodeAction(TypedDict):
     # @since 3.16.0
     #
     data: NotRequired[Any]
+
+
+class ColorPresentationParams(WorkDoneProgressParams, PartialResultParams):
+    #
+    # The text document.
+    #
+    textDocument: TextDocumentIdentifier
+
+    #
+    # The color information to request presentations for.
+    #
+    color: Color
+
+    #
+    # The range where the color would be inserted. Serves as a context.
+    #
+    range: Range
+
+
+class ColorPresentation(MessageData):
+    # The label of this color presentation. It will be shown on the color
+    # picker header. By default this is also the text that is inserted when
+    # selecting this color presentation.
+    #
+    label: str
+    #
+    # An [edit](#TextEdit) which is applied to a document when selecting
+    # this presentation for the color. When omitted the
+    # [label](#ColorPresentation.label) is used.
+    #
+    textEdit: NotRequired[TextEdit]
+    #
+    # An optional array of additional [text edits](#TextEdit) that are applied
+    # when selecting this color presentation. Edits must not overlap with the
+    # main [edit](#ColorPresentation.textEdit) nor with themselves.
+    #
+    additionalTextEdits: NotRequired[list[TextEdit]]
+
+
+class DocumentRangeFormattingParams(WorkDoneProgressParams):
+    #
+    # The document to format.
+    #
+    textDocument: TextDocumentIdentifier
+
+    #
+    # The range to format
+    #
+    range: Range
+
+    #
+    # The format options
+    #
+    options: FormattingOptions
+
+
+class DocumentOnTypeFormattingParams(MessageData):
+
+    #
+    # The document to format.
+    #
+    textDocument: TextDocumentIdentifier
+
+    #
+    # The position around which the on type formatting should happen.
+    # This is not necessarily the exact position where the character denoted
+    # by the property `ch` got typed.
+    #
+    position: Position
+
+    #
+    # The character that has been typed that triggered the formatting
+    # on type request. That is not necessarily the last character that
+    # got inserted into the document since the client could auto insert
+    # characters as well (e.g. like automatic brace completion).
+    #
+    ch: str
+
+    #
+    # The formatting options.
+    #
+    options: FormattingOptions
+
+
+class RenameParams(TextDocumentPositionParams, WorkDoneProgressParams):
+    #
+    # The new name of the symbol. If the given name is not valid the
+    # request must return a [ResponseError](#ResponseError) with an
+    # appropriate message set.
+    #
+    newName: str
+
+
+class PrepareRenameParams(TextDocumentPositionParams, WorkDoneProgressParams):
+    pass
+
+
+class PrepareRenameResponsePlaceholder(MessageData):
+    range: Range
+    placeholder: str
+
+
+class DefaultBehavior(MessageData):
+    defaultBehavior: bool
+
+
+PrepareRenameResponse = Range | PrepareRenameResponsePlaceholder | DefaultBehavior | None
+
+
+class LinkedEditingRangeParams(TextDocumentPositionParams, WorkDoneProgressParams):
+    pass
+
+
+class LinkedEditingRanges(MessageData):
+    #
+    # A list of ranges that can be renamed together. The ranges must have
+    # identical length and contain identical text content. The ranges cannot
+    # overlap.
+    #
+    ranges: list[Range]
+
+    #
+    # An optional word pattern (regular expression) that describes valid
+    # contents for the given ranges. If no pattern is provided, the client
+    # configuration's word pattern will be used.
+    #
+    wordPattern: NotRequired[str]
+
+
+class WorkspaceSymbolParams(WorkDoneProgressParams, PartialResultParams):
+    #
+    # A query string to filter symbols by. Clients may send an empty
+    # string here to request all symbols.
+    #
+    query: str
+
+
+class WorkspaceSymbol(MessageData):
+    #
+    # The name of this symbol.
+    #
+    name: str
+
+    #
+    # The kind of this symbol.
+    #
+    kind: SymbolKind
+
+    #
+    # Tags for this completion item.
+    #
+    tags: NotRequired[list[SymbolTag]]
+
+    #
+    # The name of the symbol containing this symbol. This information is for
+    # user interface purposes (e.g. to render a qualifier in the user interface
+    # if necessary). It can't be used to re-infer a hierarchy for the document
+    # symbols.
+    #
+    containerName: NotRequired[str]
+
+    #
+    # The location of this symbol. Whether a server is allowed to
+    # return a location without a range depends on the client
+    # capability `workspace.symbol.resolveSupport`.
+    #
+    # See also `SymbolInformation.location`.
+    #
+    location: Location | dict[str, DocumentUri]
+
+    #
+    # A data entry field that is preserved on a workspace symbol between a
+    # workspace symbol request and a workspace symbol resolve request.
+    #
+    data: NotRequired[Any]
+
+
+class DidChangeConfigurationParams(MessageData):
+    #
+    # The actual changed settings
+    #
+    settings: Any
+
+
+class WorkspaceFoldersChangeEvent(MessageData):
+    #
+    # The array of added workspace folders
+    #
+    added: list[WorkspaceFolder]
+
+    #
+    # The array of the removed workspace folders
+    #
+    removed: list[WorkspaceFolder]
+
+
+class DidChangeWorkspaceFoldersParams(MessageData):
+    #
+    # The actual workspace folder change event.
+    #
+    event: WorkspaceFoldersChangeEvent
+
+
+class FileCreate(MessageData):
+
+    #
+    # A file:// URI for the location of the file/folder being created.
+    #
+    uri: str
+
+
+class CreateFilesParams(MessageData):
+
+    #
+    # An array of all files/folders created in this operation.
+    #
+    files: list[FileCreate]
+
+
+class FileRename(MessageData):
+
+    #
+    # A file:// URI for the original location of the file/folder being renamed.
+    #
+    oldUri: str
+
+    #
+    # A file:// URI for the new location of the file/folder being renamed.
+    #
+    newUri: str
+
+
+class RenameFilesParams(MessageData):
+
+    #
+    # An array of all files/folders renamed in this operation. When a folder
+    # is renamed, only the folder will be included, and not its children.
+    #
+    files: list[FileRename]
+
+
+class FileDelete(MessageData):
+
+    #
+    # A file:// URI for the location of the file/folder being deleted.
+    #
+    uri: str
+
+
+class DeleteFilesParams(MessageData):
+
+    #
+    # An array of all files/folders deleted in this operation.
+    #
+    files: list[FileDelete]
+
+
+class DidChangeWatchedFilesParams(MessageData):
+    #
+    # The actual file events.
+    #
+    changes: list[FileEvent]
+
+
+FileChangeType = Literal[1, 2, 3]
+
+
+class FileEvent(MessageData):
+    #
+    # The file's URI.
+    #
+    uri: DocumentUri
+    #
+    # The change type.
+    #
+    type: FileChangeType

@@ -15,7 +15,6 @@ from lsp.lsp.common import MessageData
 from lsp.lsp.messages import InitializedParams, InitializeParams
 from lsp.protocol import (JsonRpcRequest, JsonRpcResponse, LspProtocol, Message, T_Content)
 
-logging.basicConfig(level='INFO')
 log = logging.getLogger('client')
 log_send = logging.getLogger('client.send')
 log_recv = logging.getLogger('client.recv')

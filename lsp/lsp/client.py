@@ -1,10 +1,11 @@
-from typing import Any, Literal, NotRequired, TypedDict
+from typing import Any, Literal, NotRequired
 
 from lsp.lsp.common import (CodeActionKind, EmptyDict, FailureHandlingKind, FoldingRangeKind, InsertTextMode,
-                            MarkupKind, PositionEncodingKind, ResourceOperationKind, SymbolKind, SymbolTag, TokenFormat)
+                            MarkupKind, MessageData, PositionEncodingKind, ResourceOperationKind, SymbolKind, SymbolTag,
+                            TokenFormat)
 
 
-class ClientWorkspaceCapabilitiesFileOptions(TypedDict):
+class ClientWorkspaceCapabilitiesFileOptions(MessageData):
     #
     # Whether the client supports dynamic registration for file
     # requests/notifications.
@@ -42,7 +43,7 @@ class ClientWorkspaceCapabilitiesFileOptions(TypedDict):
     willDelete: NotRequired[bool]
 
 
-class WorkspaceEditClientCapabilitiesChangeAnnotationSupport(TypedDict):
+class WorkspaceEditClientCapabilitiesChangeAnnotationSupport(MessageData):
     #
     # Whether the client groups edits with equal labels into tree nodes,
     # for instance all edits labelled with "Changes in Strings" would
@@ -51,7 +52,7 @@ class WorkspaceEditClientCapabilitiesChangeAnnotationSupport(TypedDict):
     groupsOnLabel: NotRequired[bool]
 
 
-class WorkspaceEditClientCapabilities(TypedDict):
+class WorkspaceEditClientCapabilities(MessageData):
     #
     # The client supports versioned document changes in `WorkspaceEdit`s
     #
@@ -88,14 +89,14 @@ class WorkspaceEditClientCapabilities(TypedDict):
     changeAnnotationSupport: NotRequired[WorkspaceEditClientCapabilitiesChangeAnnotationSupport]
 
 
-class DidChangeConfigurationClientCapabilities(TypedDict):
+class DidChangeConfigurationClientCapabilities(MessageData):
     #
     # Did change configuration notification supports dynamic registration.
     #
     dynamicRegistration: NotRequired[bool]
 
 
-class DidChangeWatchedFilesClientCapabilities(TypedDict):
+class DidChangeWatchedFilesClientCapabilities(MessageData):
     #
     # Did change watched files notification supports dynamic registration.
     # Please note that the current protocol doesn't support static
@@ -112,7 +113,7 @@ class DidChangeWatchedFilesClientCapabilities(TypedDict):
     relativePatternSupport: NotRequired[bool]
 
 
-class WorkspaceSymbolClientCapabilitiesSymbolKind(TypedDict):
+class WorkspaceSymbolClientCapabilitiesSymbolKind(MessageData):
     #
     # The symbol kind values the client supports. When this
     # property exists the client also guarantees that it will
@@ -126,14 +127,14 @@ class WorkspaceSymbolClientCapabilitiesSymbolKind(TypedDict):
     valueSet: NotRequired[list[SymbolKind]]
 
 
-class WorkspaceSymbolClientCapabilitiesTagSupport(TypedDict):
+class WorkspaceSymbolClientCapabilitiesTagSupport(MessageData):
     #
     # The tags supported by the client.
     #
     valueSet: list[SymbolTag]
 
 
-class WorkspaceSymbolClientCapabilitiesResolveSupport(TypedDict):
+class WorkspaceSymbolClientCapabilitiesResolveSupport(MessageData):
     #
     # The properties that a client can resolve lazily. Usually
     # `location.range`
@@ -141,7 +142,7 @@ class WorkspaceSymbolClientCapabilitiesResolveSupport(TypedDict):
     properties: list[str]
 
 
-class WorkspaceSymbolClientCapabilities(TypedDict):
+class WorkspaceSymbolClientCapabilities(MessageData):
     #
     # Symbol request supports dynamic registration.
     #
@@ -171,14 +172,14 @@ class WorkspaceSymbolClientCapabilities(TypedDict):
     resolveSupport: NotRequired[WorkspaceSymbolClientCapabilitiesResolveSupport]
 
 
-class ExecuteCommandClientCapabilities(TypedDict):
+class ExecuteCommandClientCapabilities(MessageData):
     #
     # Execute command supports dynamic registration.
     #
     dynamicRegistration: NotRequired[bool]
 
 
-class SemanticTokensWorkspaceClientCapabilities(TypedDict):
+class SemanticTokensWorkspaceClientCapabilities(MessageData):
     #
     # Whether the client implementation supports a refresh request sent from
     # the server to the client.
@@ -191,7 +192,7 @@ class SemanticTokensWorkspaceClientCapabilities(TypedDict):
     refreshSupport: NotRequired[bool]
 
 
-class CodeLensWorkspaceClientCapabilities(TypedDict):
+class CodeLensWorkspaceClientCapabilities(MessageData):
     #
     # Whether the client implementation supports a refresh request sent from the
     # server to the client.
@@ -204,7 +205,7 @@ class CodeLensWorkspaceClientCapabilities(TypedDict):
     refreshSupport: NotRequired[bool]
 
 
-class InlineValueWorkspaceClientCapabilities(TypedDict):
+class InlineValueWorkspaceClientCapabilities(MessageData):
     #
     # Whether the client implementation supports a refresh request sent from
     # the server to the client.
@@ -218,7 +219,7 @@ class InlineValueWorkspaceClientCapabilities(TypedDict):
     refreshSupport: NotRequired[bool]
 
 
-class InlayHintWorkspaceClientCapabilities(TypedDict):
+class InlayHintWorkspaceClientCapabilities(MessageData):
     #
     # Whether the client implementation supports a refresh request sent from
     # the server to the client.
@@ -231,7 +232,7 @@ class InlayHintWorkspaceClientCapabilities(TypedDict):
     refreshSupport: NotRequired[bool]
 
 
-class DiagnosticWorkspaceClientCapabilities(TypedDict):
+class DiagnosticWorkspaceClientCapabilities(MessageData):
     #
     # Whether the client implementation supports a refresh request sent from
     # the server to the client.
@@ -244,7 +245,7 @@ class DiagnosticWorkspaceClientCapabilities(TypedDict):
     refreshSupport: NotRequired[bool]
 
 
-class ClientWorkspaceCapabilities(TypedDict):
+class ClientWorkspaceCapabilities(MessageData):
     #
     # The client supports applying batch edits
     # to the workspace by supporting the request
@@ -317,7 +318,7 @@ class ClientWorkspaceCapabilities(TypedDict):
     diagnostics: NotRequired[DiagnosticWorkspaceClientCapabilities]
 
 
-class ShowMessageRequestClientCapabilitiesMessageActionItem(TypedDict):
+class ShowMessageRequestClientCapabilitiesMessageActionItem(MessageData):
     #
     # Whether the client supports additional attributes which
     # are preserved and sent back to the server in the
@@ -326,18 +327,18 @@ class ShowMessageRequestClientCapabilitiesMessageActionItem(TypedDict):
     additionalPropertiesSupport: NotRequired[bool]
 
 
-class ShowMessageRequestClientCapabilities(TypedDict):
+class ShowMessageRequestClientCapabilities(MessageData):
     #
     # Capabilities specific to the `MessageActionItem` type.
     #
     messageActionItem: NotRequired[ShowMessageRequestClientCapabilitiesMessageActionItem]
 
 
-class ShowDocumentClientCapabilities(TypedDict):
+class ShowDocumentClientCapabilities(MessageData):
     support: bool
 
 
-class ClientCapabilitiesWindow(TypedDict):
+class ClientCapabilitiesWindow(MessageData):
 
     #
     # It indicates whether the client supports server initiated
@@ -363,7 +364,7 @@ class ClientCapabilitiesWindow(TypedDict):
     showDocument: NotRequired[ShowDocumentClientCapabilities]
 
 
-class ClientCapabilitiesGeneralStaleRequestSupport(TypedDict):
+class ClientCapabilitiesGeneralStaleRequestSupport(MessageData):
     #
     # The client will actively cancel the request.
     #
@@ -377,7 +378,7 @@ class ClientCapabilitiesGeneralStaleRequestSupport(TypedDict):
     retryOnContentModified: list[str]
 
 
-class RegularExpressionsClientCapabilities(TypedDict):
+class RegularExpressionsClientCapabilities(MessageData):
     #
     # The engine's name.
     #
@@ -389,7 +390,7 @@ class RegularExpressionsClientCapabilities(TypedDict):
     version: NotRequired[str]
 
 
-class MarkdownClientCapabilities(TypedDict):
+class MarkdownClientCapabilities(MessageData):
     #
     # The name of the parser.
     #
@@ -409,7 +410,7 @@ class MarkdownClientCapabilities(TypedDict):
     allowedTags: NotRequired[list[str]]
 
 
-class ClientCapabilitiesGeneral(TypedDict):
+class ClientCapabilitiesGeneral(MessageData):
     #
     # Client capability that signals how the client
     # handles stale requests (e.g. a request
@@ -450,7 +451,7 @@ class ClientCapabilitiesGeneral(TypedDict):
     positionEncodings: NotRequired[list[PositionEncodingKind]]
 
 
-class TextDocumentSyncClientCapabilities(TypedDict):
+class TextDocumentSyncClientCapabilities(MessageData):
     #
     # Whether text document synchronization supports dynamic registration.
     # /
@@ -478,25 +479,25 @@ class TextDocumentSyncClientCapabilities(TypedDict):
 CompletionItemTag = Literal[1]
 
 
-class CompletionClientCapabilitiesCompletionItemTagSupport(TypedDict):
+class CompletionClientCapabilitiesCompletionItemTagSupport(MessageData):
     #
     # The tags supported by the client.
     # /
     valueSet: list[CompletionItemTag]
 
 
-class CompletionClientCapabilitiesCompletionItemResolveSuport(TypedDict):
+class CompletionClientCapabilitiesCompletionItemResolveSuport(MessageData):
     #
     # The properties that a client can resolve lazily.
     # /
     properties: list[str]
 
 
-class CompletionClientCapabilitiesCompletionItemInsertTextModeSupport(TypedDict):
+class CompletionClientCapabilitiesCompletionItemInsertTextModeSupport(MessageData):
     valueSet: list[InsertTextMode]
 
 
-class CompletionClientCapabilitiesCompletionItem(TypedDict):
+class CompletionClientCapabilitiesCompletionItem(MessageData):
     #
     # Client supports snippets as insert text.
     #
@@ -601,7 +602,7 @@ CompletionItemKind = Literal[1,  # Text
                              ]
 
 
-class CompletionClientCapabilitiesCompletionItemKind(TypedDict):
+class CompletionClientCapabilitiesCompletionItemKind(MessageData):
     #
     # The completion item kind values the client supports. When this
     # property exists the client also guarantees that it will
@@ -615,7 +616,7 @@ class CompletionClientCapabilitiesCompletionItemKind(TypedDict):
     valueSet: NotRequired[list[CompletionItemKind]]
 
 
-class CompletionClientCapabilitiesCompletionList(TypedDict):
+class CompletionClientCapabilitiesCompletionList(MessageData):
     #
     # The client supports the following itemDefaults on
     # a completion list.
@@ -629,7 +630,7 @@ class CompletionClientCapabilitiesCompletionList(TypedDict):
     itemDefaults: NotRequired[list[str]]
 
 
-class CompletionClientCapabilities(TypedDict):
+class CompletionClientCapabilities(MessageData):
     #
     # Whether completion supports dynamic registration.
     # /
@@ -666,7 +667,7 @@ class CompletionClientCapabilities(TypedDict):
     completionList: NotRequired[CompletionClientCapabilitiesCompletionList]
 
 
-class HoverClientCapabilities(TypedDict):
+class HoverClientCapabilities(MessageData):
     #
     # Whether hover supports dynamic registration.
     #
@@ -680,7 +681,7 @@ class HoverClientCapabilities(TypedDict):
     contentFormat: NotRequired[list[MarkupKind]]
 
 
-class SignatureHelpClientCapabilitiesSignatureInformationParameterInformation(TypedDict):
+class SignatureHelpClientCapabilitiesSignatureInformationParameterInformation(MessageData):
     #
     # The client supports processing label offsets instead of a
     # simple label string.
@@ -690,7 +691,7 @@ class SignatureHelpClientCapabilitiesSignatureInformationParameterInformation(Ty
     labelOffsetSupport: NotRequired[bool]
 
 
-class SignatureHelpClientCapabilitiesSignatureInformation(TypedDict):
+class SignatureHelpClientCapabilitiesSignatureInformation(MessageData):
     #
     # Client supports the follow content formats for the documentation
     # property. The order describes the preferred format of the client.
@@ -711,7 +712,7 @@ class SignatureHelpClientCapabilitiesSignatureInformation(TypedDict):
     activeParameterSupport: NotRequired[bool]
 
 
-class SignatureHelpClientCapabilities(TypedDict):
+class SignatureHelpClientCapabilities(MessageData):
     #
     # Whether signature help supports dynamic registration.
     #
@@ -734,7 +735,7 @@ class SignatureHelpClientCapabilities(TypedDict):
     contextSupport: NotRequired[bool]
 
 
-class DeclarationClientCapabilities(TypedDict):
+class DeclarationClientCapabilities(MessageData):
     #
     # Whether declaration supports dynamic registration. If this is set to
     # `true` the client supports the new `DeclarationRegistrationOptions`
@@ -748,7 +749,7 @@ class DeclarationClientCapabilities(TypedDict):
     linkSupport: NotRequired[bool]
 
 
-class DefinitionClientCapabilities(TypedDict):
+class DefinitionClientCapabilities(MessageData):
     #
     # Whether definition supports dynamic registration.
     #
@@ -762,7 +763,7 @@ class DefinitionClientCapabilities(TypedDict):
     linkSupport: NotRequired[bool]
 
 
-class TypeDefinitionClientCapabilities(TypedDict):
+class TypeDefinitionClientCapabilities(MessageData):
     #
     # Whether implementation supports dynamic registration. If this is set to
     # `true` the client supports the new `TypeDefinitionRegistrationOptions`
@@ -778,7 +779,7 @@ class TypeDefinitionClientCapabilities(TypedDict):
     linkSupport: NotRequired[bool]
 
 
-class ImplementationClientCapabilities(TypedDict):
+class ImplementationClientCapabilities(MessageData):
     #
     # Whether implementation supports dynamic registration. If this is set to
     # `true` the client supports the new `ImplementationRegistrationOptions`
@@ -794,21 +795,21 @@ class ImplementationClientCapabilities(TypedDict):
     linkSupport: NotRequired[bool]
 
 
-class ReferenceClientCapabilities(TypedDict):
+class ReferenceClientCapabilities(MessageData):
     #
     # Whether references supports dynamic registration.
     #
     dynamicRegistration: NotRequired[bool]
 
 
-class DocumentHighlightClientCapabilities(TypedDict):
+class DocumentHighlightClientCapabilities(MessageData):
     #
     # Whether document highlight supports dynamic registration.
     #
     dynamicRegistration: NotRequired[bool]
 
 
-class DocumentSymbolClientCapabilitiesSymbolKind(TypedDict):
+class DocumentSymbolClientCapabilitiesSymbolKind(MessageData):
     #
     # The symbol kind values the client supports. When this
     # property exists the client also guarantees that it will
@@ -822,14 +823,14 @@ class DocumentSymbolClientCapabilitiesSymbolKind(TypedDict):
     valueSet: NotRequired[list[SymbolKind]]
 
 
-class DocumentSymbolClientCapabilitiesTagSupport(TypedDict):
+class DocumentSymbolClientCapabilitiesTagSupport(MessageData):
     #
     # The tags supported by the client.
     #
     valueSet: list[SymbolTag]
 
 
-class DocumentSymbolClientCapabilities(TypedDict):
+class DocumentSymbolClientCapabilities(MessageData):
     #
     # Whether document symbol supports dynamic registration.
     #
@@ -864,7 +865,7 @@ class DocumentSymbolClientCapabilities(TypedDict):
     labelSupport: NotRequired[bool]
 
 
-class CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind(TypedDict):
+class CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind(MessageData):
     #
     # The code action kind values the client supports. When this
     # property exists the client also guarantees that it will
@@ -874,7 +875,7 @@ class CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind(TypedDi
     valueSet: list[CodeActionKind]
 
 
-class CodeActionClientCapabilitiesCodeActionLiteralSupport(TypedDict):
+class CodeActionClientCapabilitiesCodeActionLiteralSupport(MessageData):
     #
     # The code action kind is supported with the following value
     # set.
@@ -882,14 +883,14 @@ class CodeActionClientCapabilitiesCodeActionLiteralSupport(TypedDict):
     codeActionKind: CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind
 
 
-class CodeActionClientCapabilitiesResolveSupport(TypedDict):
+class CodeActionClientCapabilitiesResolveSupport(MessageData):
     #
     # The properties that a client can resolve lazily.
     #
     properties: list[str]
 
 
-class CodeActionClientCapabilities(TypedDict):
+class CodeActionClientCapabilities(MessageData):
     #
     # Whether code action supports dynamic registration.
     #
@@ -946,14 +947,14 @@ class CodeActionClientCapabilities(TypedDict):
     honorsChangeAnnotations: NotRequired[bool]
 
 
-class CodeLensClientCapabilities(TypedDict):
+class CodeLensClientCapabilities(MessageData):
     #
     # Whether code lens supports dynamic registration.
     #
     dynamicRegistration: NotRequired[bool]
 
 
-class DocumentLinkClientCapabilities(TypedDict):
+class DocumentLinkClientCapabilities(MessageData):
     #
     # Whether document link supports dynamic registration.
     #
@@ -967,28 +968,28 @@ class DocumentLinkClientCapabilities(TypedDict):
     tooltipSupport: NotRequired[bool]
 
 
-class DocumentColorClientCapabilities(TypedDict):
+class DocumentColorClientCapabilities(MessageData):
     #
     # Whether document color supports dynamic registration.
     #
     dynamicRegistration: NotRequired[bool]
 
 
-class DocumentFormattingClientCapabilities(TypedDict):
+class DocumentFormattingClientCapabilities(MessageData):
     #
     # Whether formatting supports dynamic registration.
     #
     dynamicRegistration: NotRequired[bool]
 
 
-class DocumentRangeFormattingClientCapabilities(TypedDict):
+class DocumentRangeFormattingClientCapabilities(MessageData):
     #
     # Whether formatting supports dynamic registration.
     #
     dynamicRegistration: NotRequired[bool]
 
 
-class DocumentOnTypeFormattingClientCapabilities(TypedDict):
+class DocumentOnTypeFormattingClientCapabilities(MessageData):
     #
     # Whether on type formatting supports dynamic registration.
     #
@@ -999,7 +1000,7 @@ class DocumentOnTypeFormattingClientCapabilities(TypedDict):
 PrepareSupportDefaultBehavior = Literal[1]
 
 
-class RenameClientCapabilities(TypedDict):
+class RenameClientCapabilities(MessageData):
     #
     # Whether rename supports dynamic registration.
     #
@@ -1039,14 +1040,14 @@ class RenameClientCapabilities(TypedDict):
 DiagnosticTag = Literal[1, 2]
 
 
-class PublishDiagnosticsClientCapabilitiesTagSupport(TypedDict):
+class PublishDiagnosticsClientCapabilitiesTagSupport(MessageData):
     #
     # The tags supported by the client.
     #
     valueSet: list[DiagnosticTag]
 
 
-class PublishDiagnosticsClientCapabilities(TypedDict):
+class PublishDiagnosticsClientCapabilities(MessageData):
     #
     # Whether the clients accepts diagnostics with related information.
     #
@@ -1085,7 +1086,7 @@ class PublishDiagnosticsClientCapabilities(TypedDict):
     dataSupport: NotRequired[bool]
 
 
-class FoldingRangeClientCapabilitiesFoldingRangeKind(TypedDict):
+class FoldingRangeClientCapabilitiesFoldingRangeKind(MessageData):
     #
     # The folding range kind values the client supports. When this
     # property exists the client also guarantees that it will
@@ -1095,7 +1096,7 @@ class FoldingRangeClientCapabilitiesFoldingRangeKind(TypedDict):
     valueSet: NotRequired[list[FoldingRangeKind]]
 
 
-class FoldingRangeClientCapabilitiesFoldingRange(TypedDict):
+class FoldingRangeClientCapabilitiesFoldingRange(MessageData):
 
     #
     # If set, the client signals that it supports setting collapsedText on
@@ -1106,7 +1107,7 @@ class FoldingRangeClientCapabilitiesFoldingRange(TypedDict):
     collapsedText: NotRequired[bool]
 
 
-class FoldingRangeClientCapabilities(TypedDict):
+class FoldingRangeClientCapabilities(MessageData):
     #
     # Whether implementation supports dynamic registration for folding range
     # providers. If this is set to `true` the client supports the new
@@ -1143,7 +1144,7 @@ class FoldingRangeClientCapabilities(TypedDict):
     foldingRange: NotRequired[FoldingRangeClientCapabilitiesFoldingRange]
 
 
-class SelectionRangeClientCapabilities(TypedDict):
+class SelectionRangeClientCapabilities(MessageData):
     #
     # Whether implementation supports dynamic registration for selection range
     # providers. If this is set to `true` the client supports the new
@@ -1153,7 +1154,7 @@ class SelectionRangeClientCapabilities(TypedDict):
     dynamicRegistration: NotRequired[bool]
 
 
-class LinkedEditingRangeClientCapabilities(TypedDict):
+class LinkedEditingRangeClientCapabilities(MessageData):
     #
     # Whether the implementation supports dynamic registration.
     # If this is set to `true` the client supports the new
@@ -1163,7 +1164,7 @@ class LinkedEditingRangeClientCapabilities(TypedDict):
     dynamicRegistration: NotRequired[bool]
 
 
-class CallHierarchyClientCapabilities(TypedDict):
+class CallHierarchyClientCapabilities(MessageData):
     #
     # Whether implementation supports dynamic registration. If this is set to
     # `true` the client supports the new `(TextDocumentRegistrationOptions &
@@ -1173,7 +1174,7 @@ class CallHierarchyClientCapabilities(TypedDict):
     dynamicRegistration: NotRequired[bool]
 
 
-class SemanticTokensClientCapabilitiesRequestsFull(TypedDict):
+class SemanticTokensClientCapabilitiesRequestsFull(MessageData):
     #
     # The client will send the `textDocument/semanticTokens/full/delta`
     # request if the server provides a corresponding handler.
@@ -1181,7 +1182,7 @@ class SemanticTokensClientCapabilitiesRequestsFull(TypedDict):
     delta: NotRequired[bool]
 
 
-class SemanticTokensClientCapabilitiesRequests(TypedDict):
+class SemanticTokensClientCapabilitiesRequests(MessageData):
     #
     # The client will send the `textDocument/semanticTokens/range` request
     # if the server provides a corresponding handler.
@@ -1195,7 +1196,7 @@ class SemanticTokensClientCapabilitiesRequests(TypedDict):
     full: NotRequired[bool | SemanticTokensClientCapabilitiesRequestsFull]
 
 
-class SemanticTokensClientCapabilities(TypedDict):
+class SemanticTokensClientCapabilities(MessageData):
     #
     # Whether implementation supports dynamic registration. If this is set to
     # `true` the client supports the new `(TextDocumentRegistrationOptions &
@@ -1266,7 +1267,7 @@ class SemanticTokensClientCapabilities(TypedDict):
     augmentsSyntaxTokens: NotRequired[bool]
 
 
-class MonikerClientCapabilities(TypedDict):
+class MonikerClientCapabilities(MessageData):
     #
     # Whether implementation supports dynamic registration. If this is set to
     # `true` the client supports the new `(TextDocumentRegistrationOptions &
@@ -1276,7 +1277,7 @@ class MonikerClientCapabilities(TypedDict):
     dynamicRegistration: NotRequired[bool]
 
 
-class TypeHierarchyClientCapabilities(TypedDict):
+class TypeHierarchyClientCapabilities(MessageData):
     #
     # Whether implementation supports dynamic registration. If this is set to
     # `true` the client supports the new `(TextDocumentRegistrationOptions &
@@ -1286,7 +1287,7 @@ class TypeHierarchyClientCapabilities(TypedDict):
     dynamicRegistration: NotRequired[bool]
 
 
-class InlineValueClientCapabilities(TypedDict):
+class InlineValueClientCapabilities(MessageData):
     #
     # Whether implementation supports dynamic registration for inline
     # value providers.
@@ -1294,7 +1295,7 @@ class InlineValueClientCapabilities(TypedDict):
     dynamicRegistration: NotRequired[bool]
 
 
-class InlayHintClientCapabilitiesResolveSupport(TypedDict):
+class InlayHintClientCapabilitiesResolveSupport(MessageData):
 
     #
     # The properties that a client can resolve lazily.
@@ -1302,7 +1303,7 @@ class InlayHintClientCapabilitiesResolveSupport(TypedDict):
     properties: list[str]
 
 
-class InlayHintClientCapabilities(TypedDict):
+class InlayHintClientCapabilities(MessageData):
 
     #
     # Whether inlay hints support dynamic registration.
@@ -1316,7 +1317,7 @@ class InlayHintClientCapabilities(TypedDict):
     resolveSupport: NotRequired[InlayHintClientCapabilitiesResolveSupport]
 
 
-class DiagnosticClientCapabilities(TypedDict):
+class DiagnosticClientCapabilities(MessageData):
     #
     # Whether implementation supports dynamic registration. If this is set to
     # `true` the client supports the new
@@ -1332,7 +1333,7 @@ class DiagnosticClientCapabilities(TypedDict):
     relatedDocumentSupport: NotRequired[bool]
 
 
-class TextDocumentClientCapabilities(TypedDict):
+class TextDocumentClientCapabilities(MessageData):
 
     synchronization: NotRequired[TextDocumentSyncClientCapabilities]
 
@@ -1483,7 +1484,7 @@ class TextDocumentClientCapabilities(TypedDict):
     diagnostic: NotRequired[DiagnosticClientCapabilities]
 
 
-class NotebookDocumentSyncClientCapabilities(TypedDict):
+class NotebookDocumentSyncClientCapabilities(MessageData):
     #
     # Whether implementation supports dynamic registration. If this is
     # set to `true` the client supports the new
@@ -1498,7 +1499,7 @@ class NotebookDocumentSyncClientCapabilities(TypedDict):
     executionSummarySupport: NotRequired[bool]
 
 
-class NotebookDocumentClientCapabilities(TypedDict):
+class NotebookDocumentClientCapabilities(MessageData):
     #
     # Capabilities specific to notebook document synchronization
     #
@@ -1507,7 +1508,7 @@ class NotebookDocumentClientCapabilities(TypedDict):
     synchronization: NotebookDocumentSyncClientCapabilities
 
 
-class ClientCapabilities(TypedDict):
+class ClientCapabilities(MessageData):
     #
     # Workspace specific client capabilities.
     #

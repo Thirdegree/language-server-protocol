@@ -3,6 +3,7 @@
 For if and when arguments over snake_case, camelCase, PascalCase, etc. get a LiTtLe ToO TiRiNg.
 """
 import asyncio
+from contextlib import suppress
 import logging
 from contextlib import suppress
 from dataclasses import dataclass
@@ -89,4 +90,5 @@ async def amain() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(amain())
+    with suppress(KeyboardInterrupt):
+        asyncio.run(amain())

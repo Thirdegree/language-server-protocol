@@ -32,18 +32,17 @@ async def lsp_server(event_loop: asyncio.AbstractEventLoop, lsp_port: int) -> As
 
         async def echo() -> None:
             while not serv.done():
-                msg = await protocol.read_message()
-                protocol.write_message(msg)
+                with suppress(asyncio.TimeoutError):
+                    msg = await asyncio.wait_for(protocol.read_message(), 0.1)
+                    protocol.write_message(msg)
 
         t = asyncio.create_task(echo())
 
         yield protocol
         serv.cancel()
-        t.cancel()
         with suppress(asyncio.CancelledError):
             await serv
-        with suppress(asyncio.CancelledError):
-            await t
+        await t
 
 
 @pytest.fixture(scope='module')

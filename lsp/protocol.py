@@ -54,6 +54,9 @@ class Message(Generic[T_Content]):
         return (f'Content-Length: {self.content_len}\r\n'
                 f'Content-Type: {self.content_type}\r\n\r\n').encode() + self.content_bytes
 
+    def __repr__(self) -> str:
+        return f"Message(content={self.content!r})"
+
     @classmethod
     def parse(cls, data: bytes) -> tuple[int, Self]:
         headers, rest = data.split(b'\r\n\r\n', maxsplit=1)
