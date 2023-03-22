@@ -11,12 +11,9 @@ from more_itertools.more import split_at
 from lsp import LanguageServer
 from lsp.lsp.common import Position, Range
 from lsp.lsp.messages import InitializeParams, InitializeResult
-from lsp.lsp.server import (CodeAction, CodeActionParams, Command,
-                            DidChangeTextDocumentParams,
-                            DidOpenTextDocumentParams,
-                            OptionalVersionedTextDocumentIdentifier,
-                            ServerCapabilities, TextDocumentEdit, TextEdit,
-                            WorkspaceEdit)
+from lsp.lsp.server import (CodeAction, CodeActionParams, Command, DidChangeTextDocumentParams,
+                            DidOpenTextDocumentParams, OptionalVersionedTextDocumentIdentifier, ServerCapabilities,
+                            TextDocumentEdit, TextEdit, WorkspaceEdit)
 
 logging.basicConfig(level='INFO')
 
@@ -35,8 +32,7 @@ def word_under_cursor(line: str, char_pos: int) -> tuple[int, int, str]:
 
 
 def spongebob(text: str) -> str:
-    return ''.join(c.upper() if i % 2 == 0 else c.lower()
-                   for i, c in enumerate(text))
+    return ''.join(c.upper() if i % 2 == 0 else c.lower() for i, c in enumerate(text))
 
 
 @dataclass
@@ -51,17 +47,14 @@ class Spongebob(LanguageServer):
             textDocumentSync=1,
         ))
 
-    async def text_document__code_action(
-            self,
-            params: CodeActionParams) -> list[Command | CodeAction] | None:
+    async def text_document__code_action(self, params: CodeActionParams) -> list[Command | CodeAction] | None:
         assert self.content is not None
         logging.info("params: %s", params)
         if params['range']['start'] == params['range']['end']:
             # point selection, take the nearest word
             line = self.content.splitlines()[params['range']['start']['line']]
             line_no = params['range']['start']['line']
-            start_char, end_char, word = word_under_cursor(
-                line, params['range']['start']['character'])
+            start_char, end_char, word = word_under_cursor(line, params['range']['start']['character'])
             start = Position(line=line_no, character=start_char)
             end = Position(line=line_no, character=end_char)
 
@@ -75,23 +68,17 @@ class Spongebob(LanguageServer):
             CodeAction(
                 title='Spongebob selection or word',
                 edit=WorkspaceEdit(documentChanges=[
-                    TextDocumentEdit(
-                        textDocument=OptionalVersionedTextDocumentIdentifier(
-                            uri=params['textDocument']['uri'], version=None),
-                        edits=[
-                            TextEdit(newText=spongebob(word),
-                                     range=Range(start=start, end=end))
-                        ])
+                    TextDocumentEdit(textDocument=OptionalVersionedTextDocumentIdentifier(
+                        uri=params['textDocument']['uri'], version=None),
+                                     edits=[TextEdit(newText=spongebob(word), range=Range(start=start, end=end))])
                 ]))
         ]
 
-    async def text_document__did_open(
-            self, params: DidOpenTextDocumentParams) -> None:
+    async def text_document__did_open(self, params: DidOpenTextDocumentParams) -> None:
         logging.info("Didopen with new content")
         self.content = params['textDocument']['text']
 
-    async def text_document__did_change(
-            self, params: DidChangeTextDocumentParams) -> None:
+    async def text_document__did_change(self, params: DidChangeTextDocumentParams) -> None:
         self.content = params['contentChanges'][0]['text']
 
 

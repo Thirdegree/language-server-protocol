@@ -35,6 +35,9 @@ build-backend = "vulcan.build_backend"
 [tool.mypy]
 strict = true
 
+[tool.yapf]
+COLUMN_LIMIT=120
+
 # pytest.ini
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
