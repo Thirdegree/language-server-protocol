@@ -25,11 +25,11 @@ In order to create a simple language server, override :py:func:`lsp.LanguageServ
 
 
    class SimpleLanguageServer(LanguageServer):
-       async def Initialize(self, params: InitializeParams) -> InitializeResult: 
+       async def initialize(self, params: InitializeParams) -> InitializeResult: 
            return InitializeResult(capabilities={})
 
    async def amain() -> None:
-       async with SimpleLanguageServer().listen() as server:
+       async with SimpleLanguageServer().serve() as server:
            await server.wait()
 
    if __name__ == '__main__':
