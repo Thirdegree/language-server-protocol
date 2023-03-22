@@ -4,6 +4,7 @@ For if and when arguments over snake_case, camelCase, PascalCase, etc. get a LiT
 """
 import asyncio
 import logging
+from contextlib import suppress
 from dataclasses import dataclass
 
 from more_itertools.more import split_at

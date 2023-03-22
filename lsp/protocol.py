@@ -46,7 +46,7 @@ class JsonRpcResponse(JsonRpcContent, Generic[T]):
 class Message(Generic[T_Content]):
     content: T_Content
     _content_bytes: bytes | None = None
-    _encoding: str | None = None
+    _encoding: str = 'utf-8'
     _content_len: int | None = None
     _content_type: str | None = None
 
@@ -60,7 +60,7 @@ class Message(Generic[T_Content]):
         # trailing sep for the headers is consumed above, so it's ok to just split
         content_len: int | None = None
         content_type: bytes | None = None
-        for header in sorted(headers.split(b'\r\n')):
+        for header in headers.split(b'\r\n'):
             if header.startswith(b'Content-Type: '):
                 content_type = header[14:]
             elif header.startswith(b'Content-Length: '):
@@ -71,13 +71,13 @@ class Message(Generic[T_Content]):
         content = json.loads(rest[:content_len] or b'{}')
         return header_len + content_len + 4, cls(content=content,
                                                  _content_len=content_len,
-                                                 _content_type=content_type.decode() if content_type else None,
+                                                 _content_type=None if content_type is None else content_type.decode(),
                                                  _content_bytes=rest[:content_len])
 
     @property
     def content_type(self) -> str:
         if self._content_type is None:
-            self._content_type = 'application/vscode-jsonrpc; charset=utf-8'
+            self._content_type = f'application/vscode-jsonrpc; charset={self.encoding}'
         return self._content_type
 
     @property
@@ -97,8 +97,8 @@ class Message(Generic[T_Content]):
         if self._encoding is None:
             msg = EmailMessage()
             msg['Content-Type'] = self.content_type
-            self._encoding = msg.get_param('charset', 'utf-8')  # type: ignore
-        return self._encoding  # type: ignore
+            self._encoding = msg.get_param('charset', 'utf-8')
+        return self._encoding
 
 
 class LspProtocol(asyncio.BufferedProtocol, Generic[T_Content]):
@@ -116,6 +116,9 @@ class LspProtocol(asyncio.BufferedProtocol, Generic[T_Content]):
         self.transport: asyncio.WriteTransport
 
     def get_buffer(self, sizehint: int) -> memoryview:
+        """
+        Get the next writable section of the buffer. Double the size if there is no remaining free buffer.
+        """
         _ = sizehint
         log.debug("get buffer, cursor: %s, buffer: %s", self.cursor, self.buf_size)
         if self.cursor >= self.buf_size - 1:
@@ -130,14 +133,20 @@ class LspProtocol(asyncio.BufferedProtocol, Generic[T_Content]):
         self.buffer = new_buf
 
     def buffer_updated(self, nbytes: int) -> None:
-        # FIXME: wer're just kinda assuming that all invalid content is just incomplete
+        """
+        Parse new data into new message, and shift data up
+        """
+        # FIXME: we're just kinda assuming that all invalid content is just incomplete
+        # FIXME: also, it's possible that we get multiple full messages here,
+        #        and are doing wasteful copies.
+        #        Not a bad bug but not ideal
         self.cursor += nbytes
         with suppress(ValueError):
             msg: Message[T_Content]
             read, msg = Message.parse(bytes(self.buffer[:self.cursor]))
             self.buffer[:self.cursor - read] = self.buffer[read:self.cursor]
             self.out_queue.put_nowait(msg)
-            self.cursor = 0
+            self.cursor = self.cursor - read
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
         assert isinstance(transport, asyncio.Transport)
