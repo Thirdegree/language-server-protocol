@@ -1,9 +1,7 @@
 from typing import Any, Literal, NotRequired, TypedDict
 
-from lsp.lsp.common import (CodeActionKind, EmptyDict, FailureHandlingKind,
-                            FoldingRangeKind, InsertTextMode, MarkupKind,
-                            PositionEncodingKind, ResourceOperationKind,
-                            SymbolKind, SymbolTag, TokenFormat)
+from lsp.lsp.common import (CodeActionKind, EmptyDict, FailureHandlingKind, FoldingRangeKind, InsertTextMode,
+                            MarkupKind, PositionEncodingKind, ResourceOperationKind, SymbolKind, SymbolTag, TokenFormat)
 
 
 class ClientWorkspaceCapabilitiesFileOptions(TypedDict):
@@ -87,8 +85,7 @@ class WorkspaceEditClientCapabilities(TypedDict):
     # create file, rename file and delete file changes.
     # @since 3.16.0
     #
-    changeAnnotationSupport: NotRequired[
-        WorkspaceEditClientCapabilitiesChangeAnnotationSupport]
+    changeAnnotationSupport: NotRequired[WorkspaceEditClientCapabilitiesChangeAnnotationSupport]
 
 
 class DidChangeConfigurationClientCapabilities(TypedDict):
@@ -171,8 +168,7 @@ class WorkspaceSymbolClientCapabilities(TypedDict):
     #
     # @since 3.17.0 - proposedState
     #
-    resolveSupport: NotRequired[
-        WorkspaceSymbolClientCapabilitiesResolveSupport]
+    resolveSupport: NotRequired[WorkspaceSymbolClientCapabilitiesResolveSupport]
 
 
 class ExecuteCommandClientCapabilities(TypedDict):
@@ -263,8 +259,7 @@ class ClientWorkspaceCapabilities(TypedDict):
     # Capabilities specific to the `workspace/didChangeConfiguration`
     # notification.
     #
-    didChangeConfiguration: NotRequired[
-        DidChangeConfigurationClientCapabilities]
+    didChangeConfiguration: NotRequired[DidChangeConfigurationClientCapabilities]
     #
     # Capabilities specific to the `workspace/didChangeWatchedFiles`
     # notification.
@@ -335,8 +330,7 @@ class ShowMessageRequestClientCapabilities(TypedDict):
     #
     # Capabilities specific to the `MessageActionItem` type.
     #
-    messageActionItem: NotRequired[
-        ShowMessageRequestClientCapabilitiesMessageActionItem]
+    messageActionItem: NotRequired[ShowMessageRequestClientCapabilitiesMessageActionItem]
 
 
 class ShowDocumentClientCapabilities(TypedDict):
@@ -423,8 +417,7 @@ class ClientCapabilitiesGeneral(TypedDict):
     # anymore since the information is outdated).
     # @since 3.17.0
     #
-    staleRequestSupport: NotRequired[
-        ClientCapabilitiesGeneralStaleRequestSupport]
+    staleRequestSupport: NotRequired[ClientCapabilitiesGeneralStaleRequestSupport]
 
     #
     # Client capabilities specific to regular expressions.
@@ -499,8 +492,7 @@ class CompletionClientCapabilitiesCompletionItemResolveSuport(TypedDict):
     properties: list[str]
 
 
-class CompletionClientCapabilitiesCompletionItemInsertTextModeSupport(
-        TypedDict):
+class CompletionClientCapabilitiesCompletionItemInsertTextModeSupport(TypedDict):
     valueSet: list[InsertTextMode]
 
 
@@ -544,8 +536,7 @@ class CompletionClientCapabilitiesCompletionItem(TypedDict):
     #
     # @since 3.15.0
     # /
-    tagSupport: NotRequired[
-        CompletionClientCapabilitiesCompletionItemTagSupport]
+    tagSupport: NotRequired[CompletionClientCapabilitiesCompletionItemTagSupport]
 
     #
     # Client supports insert replace edit to control different behavior if
@@ -562,8 +553,7 @@ class CompletionClientCapabilitiesCompletionItem(TypedDict):
     #
     # @since 3.16.0
     # /
-    resolveSupport: NotRequired[
-        CompletionClientCapabilitiesCompletionItemResolveSuport]
+    resolveSupport: NotRequired[CompletionClientCapabilitiesCompletionItemResolveSuport]
 
     #
     # The client supports the `insertTextMode` property on
@@ -572,8 +562,7 @@ class CompletionClientCapabilitiesCompletionItem(TypedDict):
     #
     # @since 3.16.0
     # /
-    insertTextModeSupport: NotRequired[
-        CompletionClientCapabilitiesCompletionItemInsertTextModeSupport]
+    insertTextModeSupport: NotRequired[CompletionClientCapabilitiesCompletionItemInsertTextModeSupport]
 
     #
     # The client has support for completion item label
@@ -652,8 +641,7 @@ class CompletionClientCapabilities(TypedDict):
     # /
     completionItem: NotRequired[CompletionClientCapabilitiesCompletionItem]
 
-    completionItemKind: NotRequired[
-        CompletionClientCapabilitiesCompletionItemKind]
+    completionItemKind: NotRequired[CompletionClientCapabilitiesCompletionItemKind]
 
     #
     # The client supports to send additional context information for a
@@ -692,8 +680,7 @@ class HoverClientCapabilities(TypedDict):
     contentFormat: NotRequired[list[MarkupKind]]
 
 
-class SignatureHelpClientCapabilitiesSignatureInformationParameterInformation(
-        TypedDict):
+class SignatureHelpClientCapabilitiesSignatureInformationParameterInformation(TypedDict):
     #
     # The client supports processing label offsets instead of a
     # simple label string.
@@ -713,8 +700,7 @@ class SignatureHelpClientCapabilitiesSignatureInformation(TypedDict):
     #
     # Client capabilities specific to parameter information.
     #
-    parameterInformation: NotRequired[
-        SignatureHelpClientCapabilitiesSignatureInformationParameterInformation]
+    parameterInformation: NotRequired[SignatureHelpClientCapabilitiesSignatureInformationParameterInformation]
 
     #
     # The client supports the `activeParameter` property on
@@ -735,8 +721,7 @@ class SignatureHelpClientCapabilities(TypedDict):
     # The client supports the following `SignatureInformation`
     # specific properties.
     #
-    signatureInformation: NotRequired[
-        SignatureHelpClientCapabilitiesSignatureInformation]
+    signatureInformation: NotRequired[SignatureHelpClientCapabilitiesSignatureInformation]
 
     #
     # The client supports to send additional context information for a
@@ -879,8 +864,7 @@ class DocumentSymbolClientCapabilities(TypedDict):
     labelSupport: NotRequired[bool]
 
 
-class CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind(
-        TypedDict):
+class CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind(TypedDict):
     #
     # The code action kind values the client supports. When this
     # property exists the client also guarantees that it will
@@ -917,8 +901,7 @@ class CodeActionClientCapabilities(TypedDict):
     #
     # @since 3.8.0
     #
-    codeActionLiteralSupport: NotRequired[
-        CodeActionClientCapabilitiesCodeActionLiteralSupport]
+    codeActionLiteralSupport: NotRequired[CodeActionClientCapabilitiesCodeActionLiteralSupport]
 
     #
     # Whether code action supports the `isPreferred` property.
@@ -1151,8 +1134,7 @@ class FoldingRangeClientCapabilities(TypedDict):
     #
     # @since 3.17.0
     #
-    foldingRangeKind: NotRequired[
-        FoldingRangeClientCapabilitiesFoldingRangeKind]
+    foldingRangeKind: NotRequired[FoldingRangeClientCapabilitiesFoldingRangeKind]
 
     #
     # Specific options for the folding range.

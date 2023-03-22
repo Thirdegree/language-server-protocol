@@ -4,8 +4,7 @@ DocumentUri = NewType('DocumentUri', str)
 URI = NewType('URI', str)
 TraceValue = Literal['off', 'message', 'verbose']
 ResourceOperationKind = Literal['create', 'rename', 'delete']
-FailureHandlingKind = Literal['abort', 'transactional', 'undo',
-                              'textOnlyTransactional']
+FailureHandlingKind = Literal['abort', 'transactional', 'undo', 'textOnlyTransactional']
 PositionEncodingKind = Literal['utf-8', 'utf-16', 'utf-32']
 FoldingRangeKind = Literal['comment', 'imports', 'region']
 TokenFormat = Literal['relative']

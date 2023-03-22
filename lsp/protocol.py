@@ -5,8 +5,7 @@ import logging
 from contextlib import suppress
 from dataclasses import dataclass
 from email.message import Message as EmailMessage
-from typing import (TYPE_CHECKING, Any, Generic, Literal, NotRequired, Self,
-                    TypedDict, TypeVar)
+from typing import (TYPE_CHECKING, Any, Generic, Literal, NotRequired, Self, TypedDict, TypeVar)
 
 import ujson as json
 
@@ -56,8 +55,7 @@ class Message(Generic[T_Content]):
 
     def __bytes__(self) -> bytes:
         return (f'Content-Length: {self.content_len}\r\n'
-                f'Content-Type: {self.content_type}\r\n\r\n'
-                ).encode() + self.content_bytes
+                f'Content-Type: {self.content_type}\r\n\r\n').encode() + self.content_bytes
 
     @classmethod
     def parse(cls, data: bytes) -> tuple[int, Self]:
@@ -74,11 +72,10 @@ class Message(Generic[T_Content]):
             raise ValueError("Invalid content")
         header_len = len(headers)
         content = json.loads(rest[:content_len] or b'{}')
-        return header_len + content_len + 4, cls(
-            content=content,
-            _content_len=content_len,
-            _content_type=content_type.decode() if content_type else None,
-            _content_bytes=rest[:content_len])
+        return header_len + content_len + 4, cls(content=content,
+                                                 _content_len=content_len,
+                                                 _content_type=content_type.decode() if content_type else None,
+                                                 _content_bytes=rest[:content_len])
 
     @property
     def content_type(self) -> str:
@@ -95,8 +92,7 @@ class Message(Generic[T_Content]):
     @property
     def content_bytes(self) -> bytes:
         if self._content_bytes is None:
-            self._content_bytes = json.dumps(self.content).encode(
-                self.encoding)
+            self._content_bytes = json.dumps(self.content).encode(self.encoding)
         return self._content_bytes
 
     @property
@@ -119,21 +115,18 @@ class LspProtocol(asyncio.BufferedProtocol):
         self.buf_size = 1024
         self.buffer = memoryview(bytearray(b'*' * self.buf_size))
         self.cursor = 0
-        self.out_queue: asyncio.Queue[Message[
-            JsonRpcRequest[Any]]] = asyncio.Queue()
+        self.out_queue: asyncio.Queue[Message[JsonRpcRequest[Any]]] = asyncio.Queue()
         self.transport: asyncio.Transport
 
     def get_buffer(self, sizehint: int) -> ReadableBuffer:
         _ = sizehint
-        log.debug("get buffer, cursor: %s, buffer: %s", self.cursor,
-                  self.buf_size)
+        log.debug("get buffer, cursor: %s, buffer: %s", self.cursor, self.buf_size)
         if self.cursor >= self.buf_size - 1:
             self.double_buffer()
         return self.buffer[self.cursor:]
 
     def double_buffer(self) -> None:
-        log.debug("Doubling buffer size, %s to %s", self.buf_size,
-                  self.buf_size * 2)
+        log.debug("Doubling buffer size, %s to %s", self.buf_size, self.buf_size * 2)
         new_buf = memoryview(bytearray(b'*' * self.buf_size * 2))
         new_buf[:len(self.buffer)] = self.buffer
         self.buf_size = self.buf_size * 2

@@ -2,12 +2,9 @@ from __future__ import annotations
 
 from typing import Any, Literal, NotRequired, TypedDict
 
-from lsp.lsp.common import (URI, CodeActionKind, CodeActionTriggerKind,
-                            DocumentHighlightKind, DocumentUri, EmptyDict,
-                            FileOperationPatternKind, FoldingRangeKind,
-                            InsertTextMode, Location, MarkupKind, MonikerKind,
-                            Position, PositionEncodingKind, Range, SymbolKind,
-                            SymbolTag, UniquenessLevel,
+from lsp.lsp.common import (URI, CodeActionKind, CodeActionTriggerKind, DocumentHighlightKind, DocumentUri, EmptyDict,
+                            FileOperationPatternKind, FoldingRangeKind, InsertTextMode, Location, MarkupKind,
+                            MonikerKind, Position, PositionEncodingKind, Range, SymbolKind, SymbolTag, UniquenessLevel,
                             WorkDoneProgressOptions)
 
 
@@ -226,9 +223,8 @@ class NotebookDocumentSyncOptionsNotebookSelectorOptionalCells(TypedDict):
     cells: NotRequired[list[NotebookDocumentSyncOptionsNotebookSelectorCells]]
 
 
-NotebookSelector = (
-    NotebookDocumentSyncOptionsNotebookSelectorOptionalCells
-    | NotebookDocumentSyncOptionsNotebookSelectorOptionalNotebook)
+NotebookSelector = (NotebookDocumentSyncOptionsNotebookSelectorOptionalCells
+                    | NotebookDocumentSyncOptionsNotebookSelectorOptionalNotebook)
 
 
 class NotebookDocumentSyncOptions(TypedDict):
@@ -252,8 +248,7 @@ class StaticRegistrationOptions(TypedDict):
     id: NotRequired[str]
 
 
-class NotebookDocumentSyncRegistrationOptions(NotebookDocumentSyncOptions,
-                                              StaticRegistrationOptions):
+class NotebookDocumentSyncRegistrationOptions(NotebookDocumentSyncOptions, StaticRegistrationOptions):
     pass
 
 
@@ -379,9 +374,7 @@ class TextDocumentRegistrationOptions(TypedDict):
     documentSelector: DocumentSelector | None
 
 
-class DeclarationRegistrationOptions(DeclarationOptions,
-                                     TextDocumentRegistrationOptions,
-                                     StaticRegistrationOptions):
+class DeclarationRegistrationOptions(DeclarationOptions, TextDocumentRegistrationOptions, StaticRegistrationOptions):
     pass
 
 
@@ -401,8 +394,7 @@ class ImplementationOptions(WorkDoneProgressOptions):
     pass
 
 
-class ImplementationRegistrationOptions(TextDocumentRegistrationOptions,
-                                        ImplementationOptions,
+class ImplementationRegistrationOptions(TextDocumentRegistrationOptions, ImplementationOptions,
                                         StaticRegistrationOptions):
     pass
 
@@ -461,8 +453,7 @@ class DocumentColorOptions(WorkDoneProgressOptions):
     pass
 
 
-class DocumentColorRegistrationOptions(TextDocumentRegistrationOptions,
-                                       StaticRegistrationOptions,
+class DocumentColorRegistrationOptions(TextDocumentRegistrationOptions, StaticRegistrationOptions,
                                        DocumentColorOptions):
     pass
 
@@ -498,9 +489,7 @@ class FoldingRangeOptions(WorkDoneProgressOptions):
     pass
 
 
-class FoldingRangeRegistrationOptions(TextDocumentRegistrationOptions,
-                                      FoldingRangeOptions,
-                                      StaticRegistrationOptions):
+class FoldingRangeRegistrationOptions(TextDocumentRegistrationOptions, FoldingRangeOptions, StaticRegistrationOptions):
     pass
 
 
@@ -512,8 +501,7 @@ class SelectionRangeOptions(WorkDoneProgressOptions):
     pass
 
 
-class SelectionRangeRegistrationOptions(SelectionRangeOptions,
-                                        TextDocumentRegistrationOptions,
+class SelectionRangeRegistrationOptions(SelectionRangeOptions, TextDocumentRegistrationOptions,
                                         StaticRegistrationOptions):
     pass
 
@@ -522,8 +510,7 @@ class LinkedEditingRangeOptions(WorkDoneProgressOptions):
     pass
 
 
-class LinkedEditingRangeRegistrationOptions(TextDocumentRegistrationOptions,
-                                            LinkedEditingRangeOptions,
+class LinkedEditingRangeRegistrationOptions(TextDocumentRegistrationOptions, LinkedEditingRangeOptions,
                                             StaticRegistrationOptions):
     pass
 
@@ -532,8 +519,7 @@ class CallHierarchyOptions(WorkDoneProgressOptions):
     pass
 
 
-class CallHierarchyRegistrationOptions(TextDocumentRegistrationOptions,
-                                       CallHierarchyOptions,
+class CallHierarchyRegistrationOptions(TextDocumentRegistrationOptions, CallHierarchyOptions,
                                        StaticRegistrationOptions):
     pass
 
@@ -572,8 +558,7 @@ class SemanticTokensOptions(WorkDoneProgressOptions):
     full: NotRequired[bool | SemanticTokensOptionsFull]
 
 
-class SemanticTokensRegistrationOptions(TextDocumentRegistrationOptions,
-                                        SemanticTokensOptions,
+class SemanticTokensRegistrationOptions(TextDocumentRegistrationOptions, SemanticTokensOptions,
                                         StaticRegistrationOptions):
     pass
 
@@ -582,8 +567,7 @@ class MonikerOptions(WorkDoneProgressOptions):
     pass
 
 
-class MonikerRegistrationOptions(TextDocumentRegistrationOptions,
-                                 MonikerOptions):
+class MonikerRegistrationOptions(TextDocumentRegistrationOptions, MonikerOptions):
     pass
 
 
@@ -591,8 +575,7 @@ class TypeHierarchyOptions(WorkDoneProgressOptions):
     pass
 
 
-class TypeHierarchyRegistrationOptions(TextDocumentRegistrationOptions,
-                                       TypeHierarchyOptions,
+class TypeHierarchyRegistrationOptions(TextDocumentRegistrationOptions, TypeHierarchyOptions,
                                        StaticRegistrationOptions):
     pass
 
@@ -601,9 +584,7 @@ class InlineValueOptions(WorkDoneProgressOptions):
     pass
 
 
-class InlineValueRegistrationOptions(InlineValueOptions,
-                                     TextDocumentRegistrationOptions,
-                                     StaticRegistrationOptions):
+class InlineValueRegistrationOptions(InlineValueOptions, TextDocumentRegistrationOptions, StaticRegistrationOptions):
     pass
 
 
@@ -614,9 +595,7 @@ class InlayHintOptions(WorkDoneProgressOptions):
     resolveProvider: NotRequired[bool]
 
 
-class InlayHintRegistrationOptions(InlayHintOptions,
-                                   TextDocumentRegistrationOptions,
-                                   StaticRegistrationOptions):
+class InlayHintRegistrationOptions(InlayHintOptions, TextDocumentRegistrationOptions, StaticRegistrationOptions):
     pass
 
 
@@ -649,9 +628,7 @@ class DiagnosticOptions(WorkDoneProgressOptions):
     workspaceDiagnostics: bool
 
 
-class DiagnosticRegistrationOptions(TextDocumentRegistrationOptions,
-                                    DiagnosticOptions,
-                                    StaticRegistrationOptions):
+class DiagnosticRegistrationOptions(TextDocumentRegistrationOptions, DiagnosticOptions, StaticRegistrationOptions):
     pass
 
 
@@ -676,16 +653,14 @@ class ServerCapabilities(TypedDict):
     # TextDocumentSyncKind number. If omitted it defaults to
     # `TextDocumentSyncKind.None`.
     #
-    textDocumentSync: NotRequired[TextDocumentSyncOptions
-                                  | TextDocumentSyncKind]
+    textDocumentSync: NotRequired[TextDocumentSyncOptions | TextDocumentSyncKind]
 
     #
     # Defines how notebook documents are synced.
     #
     # @since 3.17.0
     #
-    notebookDocumentSync: NotRequired[
-        NotebookDocumentSyncOptions | NotebookDocumentSyncRegistrationOptions]
+    notebookDocumentSync: NotRequired[NotebookDocumentSyncOptions | NotebookDocumentSyncRegistrationOptions]
 
     #
     # The server provides completion support.
@@ -707,8 +682,7 @@ class ServerCapabilities(TypedDict):
     #
     # @since 3.14.0
     #
-    declarationProvider: NotRequired[bool | DeclarationOptions
-                                     | DeclarationRegistrationOptions]
+    declarationProvider: NotRequired[bool | DeclarationOptions | DeclarationRegistrationOptions]
 
     #
     # The server provides goto definition support.
@@ -720,16 +694,14 @@ class ServerCapabilities(TypedDict):
     #
     # @since 3.6.0
     #
-    typeDefinitionProvider: NotRequired[bool | TypeDefinitionOptions
-                                        | TypeDefinitionRegistrationOptions]
+    typeDefinitionProvider: NotRequired[bool | TypeDefinitionOptions | TypeDefinitionRegistrationOptions]
 
     #
     # The server provides goto implementation support.
     #
     # @since 3.6.0
     #
-    implementationProvider: NotRequired[bool | ImplementationOptions
-                                        | ImplementationRegistrationOptions]
+    implementationProvider: NotRequired[bool | ImplementationOptions | ImplementationRegistrationOptions]
 
     #
     # The server provides find references support.
@@ -768,8 +740,7 @@ class ServerCapabilities(TypedDict):
     #
     # @since 3.6.0
     #
-    colorProvider: NotRequired[bool | DocumentColorOptions
-                               | DocumentColorRegistrationOptions]
+    colorProvider: NotRequired[bool | DocumentColorOptions | DocumentColorRegistrationOptions]
 
     #
     # The server provides document formatting.
@@ -779,14 +750,12 @@ class ServerCapabilities(TypedDict):
     #
     # The server provides document range formatting.
     #
-    documentRangeFormattingProvider: NotRequired[
-        bool | DocumentRangeFormattingOptions]
+    documentRangeFormattingProvider: NotRequired[bool | DocumentRangeFormattingOptions]
 
     #
     # The server provides document formatting on typing.
     #
-    documentOnTypeFormattingProvider: NotRequired[
-        DocumentOnTypeFormattingOptions]
+    documentOnTypeFormattingProvider: NotRequired[DocumentOnTypeFormattingOptions]
 
     #
     # The server provides rename support. RenameOptions may only be
@@ -800,8 +769,7 @@ class ServerCapabilities(TypedDict):
     #
     # @since 3.10.0
     #
-    foldingRangeProvider: NotRequired[bool | FoldingRangeOptions
-                                      | FoldingRangeRegistrationOptions]
+    foldingRangeProvider: NotRequired[bool | FoldingRangeOptions | FoldingRangeRegistrationOptions]
 
     #
     # The server provides execute command support.
@@ -813,73 +781,63 @@ class ServerCapabilities(TypedDict):
     #
     # @since 3.15.0
     #
-    selectionRangeProvider: NotRequired[bool | SelectionRangeOptions
-                                        | SelectionRangeRegistrationOptions]
+    selectionRangeProvider: NotRequired[bool | SelectionRangeOptions | SelectionRangeRegistrationOptions]
 
     #
     # The server provides linked editing range support.
     #
     # @since 3.16.0
     #
-    linkedEditingRangeProvider: NotRequired[
-        bool | LinkedEditingRangeOptions
-        | LinkedEditingRangeRegistrationOptions]
+    linkedEditingRangeProvider: NotRequired[bool | LinkedEditingRangeOptions | LinkedEditingRangeRegistrationOptions]
 
     #
     # The server provides call hierarchy support.
     #
     # @since 3.16.0
     #
-    callHierarchyProvider: NotRequired[bool | CallHierarchyOptions
-                                       | CallHierarchyRegistrationOptions]
+    callHierarchyProvider: NotRequired[bool | CallHierarchyOptions | CallHierarchyRegistrationOptions]
 
     #
     # The server provides semantic tokens support.
     #
     # @since 3.16.0
     #
-    semanticTokensProvider: NotRequired[SemanticTokensOptions
-                                        | SemanticTokensRegistrationOptions]
+    semanticTokensProvider: NotRequired[SemanticTokensOptions | SemanticTokensRegistrationOptions]
 
     #
     # Whether server provides moniker support.
     #
     # @since 3.16.0
     #
-    monikerProvider: NotRequired[bool | MonikerOptions
-                                 | MonikerRegistrationOptions]
+    monikerProvider: NotRequired[bool | MonikerOptions | MonikerRegistrationOptions]
 
     #
     # The server provides type hierarchy support.
     #
     # @since 3.17.0
     #
-    typeHierarchyProvider: NotRequired[bool | TypeHierarchyOptions
-                                       | TypeHierarchyRegistrationOptions]
+    typeHierarchyProvider: NotRequired[bool | TypeHierarchyOptions | TypeHierarchyRegistrationOptions]
 
     #
     # The server provides inline values.
     #
     # @since 3.17.0
     #
-    inlineValueProvider: NotRequired[bool | InlineValueOptions
-                                     | InlineValueRegistrationOptions]
+    inlineValueProvider: NotRequired[bool | InlineValueOptions | InlineValueRegistrationOptions]
 
     #
     # The server provides inlay hints.
     #
     # @since 3.17.0
     #
-    inlayHintProvider: NotRequired[bool | InlayHintOptions
-                                   | InlayHintRegistrationOptions]
+    inlayHintProvider: NotRequired[bool | InlayHintOptions | InlayHintRegistrationOptions]
 
     #
     # The server has support for pull model diagnostics.
     #
     # @since 3.17.0
     #
-    diagnosticProvider: NotRequired[DiagnosticOptions
-                                    | DiagnosticRegistrationOptions]
+    diagnosticProvider: NotRequired[DiagnosticOptions | DiagnosticRegistrationOptions]
 
     #
     # The server provides workspace symbol support.
@@ -1092,23 +1050,19 @@ class PartialResultParams(TypedDict):
     partialResultToken: NotRequired[ProgressToken]
 
 
-class DeclarationParams(TextDocumentPositionParams, WorkDoneProgressParams,
-                        PartialResultParams):
+class DeclarationParams(TextDocumentPositionParams, WorkDoneProgressParams, PartialResultParams):
     pass
 
 
-class DefinitionParams(TextDocumentPositionParams, WorkDoneProgressParams,
-                       PartialResultParams):
+class DefinitionParams(TextDocumentPositionParams, WorkDoneProgressParams, PartialResultParams):
     pass
 
 
-class TypeDefinitionParams(TextDocumentPositionParams, WorkDoneProgressParams,
-                           PartialResultParams):
+class TypeDefinitionParams(TextDocumentPositionParams, WorkDoneProgressParams, PartialResultParams):
     pass
 
 
-class ImplementationParams(TextDocumentPositionParams, WorkDoneProgressParams,
-                           PartialResultParams):
+class ImplementationParams(TextDocumentPositionParams, WorkDoneProgressParams, PartialResultParams):
     pass
 
 
@@ -1119,13 +1073,11 @@ class ReferenceContext(TypedDict):
     includeDeclaration: bool
 
 
-class ReferenceParams(TextDocumentPositionParams, WorkDoneProgressParams,
-                      PartialResultParams):
+class ReferenceParams(TextDocumentPositionParams, WorkDoneProgressParams, PartialResultParams):
     context: ReferenceContext
 
 
-class CallHierarchyPrepareParams(TextDocumentPositionParams,
-                                 WorkDoneProgressParams):
+class CallHierarchyPrepareParams(TextDocumentPositionParams, WorkDoneProgressParams):
     pass
 
 
@@ -1182,8 +1134,7 @@ CallHierarchyIncomingCall = TypedDict('CallHierarchyIncomingCall', {
 })
 
 
-class CallHierarchyIncomingCallsParams(WorkDoneProgressParams,
-                                       PartialResultParams):
+class CallHierarchyIncomingCallsParams(WorkDoneProgressParams, PartialResultParams):
     item: CallHierarchyItem
 
 
@@ -1201,8 +1152,7 @@ class CallHierarchyOutgoingCall(TypedDict):
     fromRanges: list[Range]
 
 
-class CallHierarchyOutgoingCallsParams(WorkDoneProgressParams,
-                                       PartialResultParams):
+class CallHierarchyOutgoingCallsParams(WorkDoneProgressParams, PartialResultParams):
     item: CallHierarchyItem
 
 
@@ -1254,13 +1204,11 @@ class TypeHierarchyItem(TypedDict):
     data: NotRequired[Any]
 
 
-class TypeHierarchyPrepareParams(TextDocumentPositionParams,
-                                 WorkDoneProgressParams):
+class TypeHierarchyPrepareParams(TextDocumentPositionParams, WorkDoneProgressParams):
     pass
 
 
-class TypeHierarchySupertypesParams(WorkDoneProgressParams,
-                                    PartialResultParams):
+class TypeHierarchySupertypesParams(WorkDoneProgressParams, PartialResultParams):
     item: TypeHierarchyItem
 
 
@@ -1268,8 +1216,7 @@ class TypeHierarchySubtypesParams(WorkDoneProgressParams, PartialResultParams):
     item: TypeHierarchyItem
 
 
-class DocumentHighlightParams(TextDocumentPositionParams,
-                              WorkDoneProgressParams, PartialResultParams):
+class DocumentHighlightParams(TextDocumentPositionParams, WorkDoneProgressParams, PartialResultParams):
     pass
 
 
@@ -1868,8 +1815,7 @@ class InlayHint(TypedDict):
     data: NotRequired[Any]
 
 
-class MonikerParams(TextDocumentPositionParams, WorkDoneProgressParams,
-                    PartialResultParams):
+class MonikerParams(TextDocumentPositionParams, WorkDoneProgressParams, PartialResultParams):
     pass
 
 
@@ -1930,8 +1876,7 @@ class CompletionContext(TypedDict):
     triggerCharacter: NotRequired[str]
 
 
-class CompletionParams(TextDocumentPositionParams, WorkDoneProgressParams,
-                       PartialResultParams):
+class CompletionParams(TextDocumentPositionParams, WorkDoneProgressParams, PartialResultParams):
     #
     # The completion context. This is only available if the client specifies
     # to send this using the client capability
@@ -2883,9 +2828,8 @@ class WorkspaceEdit(TypedDict):
     # `workspace.workspaceEdit.resourceOperations` then only plain `TextEdit`s
     # using the `changes` property are supported.
     #
-    documentChanges: NotRequired[(
-        list[TextDocumentEdit]
-        | list[(TextDocumentEdit | CreateFile | RenameFile | DeleteFile)])]
+    documentChanges: NotRequired[(list[TextDocumentEdit]
+                                  | list[(TextDocumentEdit | CreateFile | RenameFile | DeleteFile)])]
 
     #
     # A map of change annotations that can be referenced in
@@ -2897,8 +2841,7 @@ class WorkspaceEdit(TypedDict):
     #
     # @since 3.16.0
     #
-    changeAnnotations: NotRequired[dict[ChangeAnnotationIdentifier,
-                                        ChangeAnnotation]]
+    changeAnnotations: NotRequired[dict[ChangeAnnotationIdentifier, ChangeAnnotation]]
 
 
 class CodeActionDisabled(TypedDict):

@@ -1,8 +1,7 @@
 from typing import Any, NotRequired, TypedDict
 
 from lsp.lsp.client import ClientCapabilities
-from lsp.lsp.common import (ClientInfo, DocumentUri, ServerInfo, TraceValue,
-                            WorkspaceFolder)
+from lsp.lsp.common import (ClientInfo, DocumentUri, ServerInfo, TraceValue, WorkspaceFolder)
 from lsp.lsp.server import ServerCapabilities
 
 

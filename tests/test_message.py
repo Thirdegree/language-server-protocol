@@ -13,15 +13,10 @@ from lsp.protocol import JsonRpcRequest, JsonRpcResponse, Message
 class TestMessage:
 
     def test_message_roundtrip(self) -> None:
-        data = json.dumps(
-            JsonRpcRequest(id=1,
-                           jsonrpc="2.0",
-                           method='whatever',
-                           params={'a': 'refactor.exact'})).encode()
-        msg_bytes = (
-            f'Content-Length: {len(data)}\r\n'
-            f'Content-Type: application/vscode-jsonrpc; charset=utf-8\r\n\r\n'
-        ).encode() + data
+        data = json.dumps(JsonRpcRequest(id=1, jsonrpc="2.0", method='whatever', params={'a':
+                                                                                         'refactor.exact'})).encode()
+        msg_bytes = (f'Content-Length: {len(data)}\r\n'
+                     f'Content-Type: application/vscode-jsonrpc; charset=utf-8\r\n\r\n').encode() + data
         msg: Message[JsonRpcRequest[Any]]
         read, msg = Message.parse(msg_bytes)
         assert read == len(msg_bytes)
@@ -38,9 +33,7 @@ async def test_language_server_init(lsp_server_port: int) -> None:
         id=1,
         jsonrpc="2.0",
         method='initialize',
-        params=InitializeParams(processId=os.getpid(),
-                                rootUri=None,
-                                capabilities=ClientCapabilities())))
+        params=InitializeParams(processId=os.getpid(), rootUri=None, capabilities=ClientCapabilities())))
     writer.write(bytes(request))
     await writer.drain()
     response: Message[JsonRpcResponse[InitializeResult]]

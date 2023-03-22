@@ -8,8 +8,7 @@ import logging
 
 from lsp import LanguageServer
 from lsp.lsp.messages import InitializeParams, InitializeResult
-from lsp.lsp.server import (CompletionItem, CompletionList, CompletionOptions,
-                            CompletionParams, ServerCapabilities)
+from lsp.lsp.server import (CompletionItem, CompletionList, CompletionOptions, CompletionParams, ServerCapabilities)
 
 logging.basicConfig(level='INFO')
 
@@ -19,12 +18,9 @@ class NeverGonna(LanguageServer):
     async def initialize(self, params: InitializeParams) -> InitializeResult:
         logging.info("initialize")
         logging.debug("client capabilities %s", params["capabilities"])
-        return InitializeResult(capabilities=ServerCapabilities(
-            completionProvider=CompletionOptions()))
+        return InitializeResult(capabilities=ServerCapabilities(completionProvider=CompletionOptions()))
 
-    async def text_document__completion(
-        self, params: CompletionParams
-    ) -> list[CompletionItem] | CompletionList | None:
+    async def text_document__completion(self, params: CompletionParams) -> list[CompletionItem] | CompletionList | None:
         logging.info("text_document__completion, %s", params)
 
         return [
