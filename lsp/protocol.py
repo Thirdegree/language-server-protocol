@@ -140,9 +140,9 @@ class LspProtocol(asyncio.BufferedProtocol, Generic[T_Content]):
         Parse new data into new message, and shift data up
         """
         # FIXME: we're just kinda assuming that all invalid content is just incomplete
-        # FIXME: also, it's possible that we get multiple full messages here,
-        #        and are doing wasteful copies.
-        #        Not a bad bug but not ideal
+        # NOTE: It's possible that we get multiple full messages here,
+        #       and are doing wasteful copies. However, this is pretty rare given the
+        #       back and forth nature of the protocol
         self.cursor += nbytes
         with suppress(ValueError):
             msg: Message[T_Content]

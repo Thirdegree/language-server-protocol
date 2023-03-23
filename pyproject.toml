@@ -18,21 +18,17 @@ Documentation="https://language-server-protocol.readthedocs.io/en/latest/index.h
 github="https://github.com/Thirdegree/language-server-protocol"
 Pypi="https://pypi.org/project/language-server-protocol/"
 
-[project.scripts]
-lspclient="lsp.client.cli:main"
-
 [tool.vulcan]
 no-lock = true
 
 [tool.vulcan.dependencies]
 ujson = "~=5.7"
 
-[tool.vulcan.extras]
-cli = ["click~=8.1"]
+[tool.setuptools]
+script-files = ["scripts/lspsnitch"]
 
 [tool.setuptools.packages.find]
 include = ["lsp*"]
-
 
 [build-system]
 requires = ["vulcan-py~=2.0"]
@@ -47,4 +43,3 @@ COLUMN_LIMIT=120
 # pytest.ini
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-

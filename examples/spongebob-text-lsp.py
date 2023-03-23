@@ -86,7 +86,8 @@ class Spongebob(LanguageServer):
 
 async def amain() -> None:
     async with Spongebob().serve() as server:
-        await server.wait()
+        # 60 second timer on it because I'm too lazy to implement proper exit on parent exit logic here
+        await asyncio.wait_for(server.wait(), 60)
 
 
 if __name__ == "__main__":
