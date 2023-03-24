@@ -7,24 +7,27 @@ from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from typing import Any, AsyncIterator, Awaitable, Callable, Literal, Self
 
-from lsp.lsp.common import Location, LocationLink
+from lsp.lsp.common import Location, LocationLink, MessageData
 from lsp.lsp.messages import (InitializedParams, InitializeParams, InitializeResult)
 from lsp.lsp.server import (
     CallHierarchyIncomingCall, CallHierarchyIncomingCallsParams, CallHierarchyItem, CallHierarchyOutgoingCall,
     CallHierarchyOutgoingCallsParams, CallHierarchyPrepareParams, CodeAction, CodeActionParams, CodeLens,
-    CodeLensParams, ColorInformation, Command, CompletionItem, CompletionList, CompletionParams, DeclarationParams,
-    DefinitionParams, DidChangeTextDocumentParams, DidCloseTextDocumentParams, DidOpenTextDocumentParams,
-    DidSaveTextDocumentParams, DocumentColorParams, DocumentFormattingParams, DocumentHighlight,
-    DocumentHighlightParams, DocumentLink, DocumentLinkParams, DocumentSymbol, DocumentSymbolParam,
-    ExecuteCommandParams, FoldingRange, FoldingRangeParams, Hover, HoverParams, ImplementationParams, InlayHint,
-    InlayHintParams, InlineValue, InlineValueParams, Moniker, MonikerParams, ReferenceParams, SelectionRange,
-    SelectionRangeParams, SemanticTokens, SemanticTokensDelta, SemanticTokensDeltaParams, SemanticTokensParams,
-    SemanticTokensRangeParams, SignatureHelp, SignatureHelpParams, SymbolInformation, TextEdit, TypeDefinitionParams,
-    TypeHierarchyItem, TypeHierarchyPrepareParams, TypeHierarchySubtypesParams, TypeHierarchySupertypesParams,
-    WillSaveTextDocumentParams)
-from lsp.protocol import JsonRpcError, JsonRpcResponse, LspProtocol, Message
+    CodeLensParams, ColorInformation, ColorPresentation, ColorPresentationParams, Command, CompletionItem,
+    CompletionList, CompletionParams, CreateFilesParams, DeclarationParams, DefinitionParams, DeleteFilesParams,
+    DidChangeConfigurationParams, DidChangeTextDocumentParams, DidChangeWatchedFilesParams,
+    DidChangeWorkspaceFoldersParams, DidCloseTextDocumentParams, DidOpenTextDocumentParams, DidSaveTextDocumentParams,
+    DocumentColorParams, DocumentFormattingParams, DocumentHighlight, DocumentHighlightParams, DocumentLink,
+    DocumentLinkParams, DocumentOnTypeFormattingParams, DocumentRangeFormattingParams, DocumentSymbol,
+    DocumentSymbolParam, ExecuteCommandParams, FoldingRange, FoldingRangeParams, Hover, HoverParams,
+    ImplementationParams, InlayHint, InlayHintParams, InlineValue, InlineValueParams, LinkedEditingRangeParams,
+    LinkedEditingRanges, Moniker, MonikerParams, PrepareRenameParams, PrepareRenameResponse, ReferenceParams,
+    RenameFilesParams, RenameParams, SelectionRange, SelectionRangeParams, SemanticTokens, SemanticTokensDelta,
+    SemanticTokensDeltaParams, SemanticTokensParams, SemanticTokensRangeParams, SignatureHelp, SignatureHelpParams,
+    SymbolInformation, TextEdit, TypeDefinitionParams, TypeHierarchyItem, TypeHierarchyPrepareParams,
+    TypeHierarchySubtypesParams, TypeHierarchySupertypesParams, WillSaveTextDocumentParams, WorkspaceEdit,
+    WorkspaceSymbol, WorkspaceSymbolParams)
+from lsp.protocol import (JsonRpcError, JsonRpcRequest, JsonRpcResponse, LspProtocol, Message)
 
-Json = dict[str, Any]
 JSONRPC_VERSION: Literal["2.0"] = "2.0"
 
 LocationResponse = Location | list[Location] | list[LocationLink] | None
@@ -38,7 +41,7 @@ def camel_to_snake(s: str) -> str:
 
 @dataclass
 class LanguageServer(ABC):
-    protocol: LspProtocol = field(default_factory=LspProtocol)
+    protocol: LspProtocol[JsonRpcRequest[Any]] = field(default_factory=LspProtocol)
     _serve_task: asyncio.Task[None] | None = None
     _netcat_task: asyncio.Task[None] | None = None
     _listening_on: int | None = None
@@ -52,9 +55,8 @@ class LanguageServer(ABC):
         while True:
             msg = await self.protocol.read_message()
             msg_id = msg.content.get('id')
-            cb: Callable[[Json | None], Awaitable[Json]] | None = getattr(self,
-                                                                          self.transform_method(msg.content['method']),
-                                                                          None)
+            cb: Callable[[MessageData | None], Awaitable[MessageData]] | None = getattr(
+                self, self.transform_method(msg.content['method']), None)
             log.debug("Found cb %s for method %s", cb, self.transform_method(msg.content['method']))
             if cb is None:
                 if msg_id is not None:
@@ -252,45 +254,77 @@ class LanguageServer(ABC):
     async def workspace__execute_command(self, params: ExecuteCommandParams) -> Any | None:
         pass
 
-    # TODO
-    # textDocument/colorPresentation
-    # textDocument/rangeFormatting
-    # textDocument/onTypeFormatting
-    # textDocument/rename
-    # textDocument/prepareRename
-    # textDocument/linkedEditingRange
-    # workspace/symbol
-    # workspaceSymbol/resolve
-    # workspace/didChangeConfiguration
-    # workspace/didChangeWorkspaceFolders
-    # workspace/willCreateFiles
-    # workspace/didCreateFiles
-    # workspace/willRenameFiles
-    # workspace/didRenameFiles
-    # workspace/willDeleteFiles
-    # workspace/didDeleteFiles
-    # workspace/didChangeWatchedFiles
+    async def text_document__color_presentation(self, params: ColorPresentationParams) -> list[ColorPresentation]:
+        raise NotImplementedError
+
+    async def text_document__range_formatting(self, params: DocumentRangeFormattingParams) -> list[TextEdit] | None:
+        pass
+
+    async def text_document__on_type_formatting(self, params: DocumentOnTypeFormattingParams) -> list[TextEdit] | None:
+        pass
+
+    async def text_document__rename(self, params: RenameParams) -> WorkspaceEdit | None:
+        pass
+
+    async def text_document__prepare_rename(self, params: PrepareRenameParams) -> PrepareRenameResponse:
+        pass
+
+    async def text_document__linked_editing_range(self, params: LinkedEditingRangeParams) -> LinkedEditingRanges | None:
+        pass
+
+    async def workspace__symbol(
+            self, params: WorkspaceSymbolParams) -> list[SymbolInformation] | list[WorkspaceSymbol] | None:
+        pass
+
+    async def workspace_symbol__resolve(self, params: WorkspaceSymbol) -> WorkspaceSymbol:
+        raise NotImplementedError
+
+    async def workspace__did_change_configuration(self, params: DidChangeConfigurationParams) -> None:
+        pass
+
+    async def workspace__did_change_workspace_folders(self, params: DidChangeWorkspaceFoldersParams) -> Any:
+        pass
+
+    async def workspace__will_create_files(self, params: CreateFilesParams) -> WorkspaceEdit | None:
+        pass
+
+    async def workspace__did_create_files(self, params: CreateFilesParams) -> None:
+        pass
+
+    async def workspace__will_rename_files(self, params: RenameFilesParams) -> WorkspaceEdit | None:
+        pass
+
+    async def workspace__did_rename_files(self, params: RenameFilesParams) -> None:
+        pass
+
+    async def workspace__will_delete_files(self, params: DeleteFilesParams) -> WorkspaceEdit | None:
+        pass
+
+    async def workspace__did_delete_files(self, params: DeleteFilesParams) -> Any:
+        pass
+
+    async def workspace__did_change_watched_files(self, params: DidChangeWatchedFilesParams) -> Any:
+        pass
 
     # notifications
 
     async def initialized(self, params: InitializedParams) -> None:
-        log.info("Did initialized")
+        pass
 
     async def text_document__did_open(self, params: DidOpenTextDocumentParams) -> None:
-        log.info("Did text_document__did_open")
+        pass
 
     async def text_document__did_change(self, params: DidChangeTextDocumentParams) -> None:
-        log.info("Did text_document__did_change")
+        pass
 
     async def text_document__will_save(self, params: WillSaveTextDocumentParams) -> None:
-        log.info("Did text_document__will_save")
+        pass
 
     async def text_document__will_save_wait_until(self, params: WillSaveTextDocumentParams) -> list[TextEdit] | None:
-        log.info("Did text_document__will_save_wait_until")
         raise NotImplementedError
 
     async def text_document__did_save(self, params: DidSaveTextDocumentParams) -> None:
-        log.info("Did text_document__did_save")
+        pass
 
     async def text_document__did_close(self, params: DidCloseTextDocumentParams) -> None:
-        log.info("Did text_document__did_close")
+        pass

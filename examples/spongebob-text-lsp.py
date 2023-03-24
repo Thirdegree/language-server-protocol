@@ -3,6 +3,7 @@
 For if and when arguments over snake_case, camelCase, PascalCase, etc. get a LiTtLe ToO TiRiNg.
 """
 import asyncio
+from contextlib import suppress
 import logging
 from dataclasses import dataclass
 
@@ -84,8 +85,10 @@ class Spongebob(LanguageServer):
 
 async def amain() -> None:
     async with Spongebob().serve() as server:
-        await server.wait()
+        # 60 second timer on it because I'm too lazy to implement proper exit on parent exit logic here
+        await asyncio.wait_for(server.wait(), 60)
 
 
 if __name__ == "__main__":
-    asyncio.run(amain())
+    with suppress(KeyboardInterrupt):
+        asyncio.run(amain())

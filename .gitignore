@@ -1,1 +1,6 @@
 generated
+__pycache__
+*.egg-info
+build
+.hypothesis
+*.log

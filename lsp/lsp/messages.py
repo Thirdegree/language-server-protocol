@@ -1,11 +1,11 @@
-from typing import Any, NotRequired, TypedDict
+from typing import Any, NotRequired
 
 from lsp.lsp.client import ClientCapabilities
-from lsp.lsp.common import (ClientInfo, DocumentUri, ServerInfo, TraceValue, WorkspaceFolder)
+from lsp.lsp.common import (ClientInfo, DocumentUri, MessageData, ServerInfo, TraceValue, WorkspaceFolder)
 from lsp.lsp.server import ServerCapabilities
 
 
-class InitializeParams(TypedDict):
+class InitializeParams(MessageData):
     #
     # The process Id of the parent process that started the server. Is None if
     # the process has not been started by another process. If the parent
@@ -68,10 +68,10 @@ class InitializeParams(TypedDict):
     workspaceFolders: NotRequired[list[WorkspaceFolder] | None]
 
 
-class InitializeResult(TypedDict):
+class InitializeResult(MessageData):
     capabilities: ServerCapabilities
     serverInfo: NotRequired[ServerInfo]
 
 
-class InitializedParams(TypedDict):
+class InitializedParams(MessageData):
     pass
