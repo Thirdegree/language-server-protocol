@@ -6,7 +6,7 @@ If you're creating an issue, please do check if the issue you're running into ha
 
 ## Development
 
-This project is built using (vulcan-py)[https://github.com/optiver/vulcan-py]. This should not matter for typical development workflows, but is worth mentioning for powerusers. For typical development, the following should suffice:
+This project is built using [vulcan-py](https://github.com/optiver/vulcan-py). This should not matter for typical development workflows, but is worth mentioning for powerusers. For typical development, the following should suffice:
 
 ```bash
 $ git clone git@github.com:Thirdegree/language-server-protocol.git
@@ -16,4 +16,4 @@ $ source .venv/bin/activate
 $ pip install -e .
 ```
 
-See (tox.inin)[./tox.ini] for the various development dependencies required.
+See [tox.ini](./tox.ini) for the various development dependencies required.
