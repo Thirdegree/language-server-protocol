@@ -11,7 +11,7 @@ import pytest
 from hypothesis import given
 
 from lsp.lsp.client import ClientWorkspaceCapabilities
-from lsp.protocol import JsonRpcRequest, JsonRpcResponse, LspProtocol, Message
+from lsp.protocol import (IncompleteError, JsonRpcRequest, JsonRpcResponse, LspProtocol, Message)
 
 
 @pytest.fixture(scope="module")
@@ -81,7 +81,7 @@ async def test_split_messages(request1: JsonRpcRequest[Any], request2: JsonRpcRe
     """
     This test is mainly checking that the buffer_updated method can handle multiple messages being received at once.
     """
-    msg1 = Message(content=request1)
+    msg1 = Message(content=request1, content_type='application/vscode-jsonrpc; charset=utf-8')
     msg2 = Message(content=request2)
     data = bytes(msg1) + bytes(msg2)
     lsp_client.transport.write(data)
@@ -89,4 +89,15 @@ async def test_split_messages(request1: JsonRpcRequest[Any], request2: JsonRpcRe
     response2 = await lsp_client.read_message()
     assert msg1 == response1
     assert msg2 == response2
+    assert msg2.encoding == response2.encoding
     assert bytes(response1) + bytes(response2) == data
+
+
+@pytest.mark.parametrize('msg', [
+    b'Content-Len',  # incomplete header
+    b'Content-Length: ',  # missing length
+    b'Content-Length: 14\r\n\r\n{"hello": "x"',  # missing closing bracket
+])
+async def test_incomplete_messages(msg: bytes) -> None:
+    with pytest.raises(IncompleteError):
+        Message.parse(msg)
