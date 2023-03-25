@@ -13,7 +13,8 @@ from lsp import LanguageServer
 from lsp.lsp.common import Position, Range
 from lsp.lsp.messages import InitializeParams, InitializeResult
 from lsp.lsp.server import (CodeAction, CodeActionParams, Command, DidChangeTextDocumentParams,
-                            DidOpenTextDocumentParams, ServerCapabilities, TextEdit, WorkspaceEdit)
+                            DidOpenTextDocumentParams, OptionalVersionedTextDocumentIdentifier, ServerCapabilities,
+                            TextDocumentEdit, TextEdit, WorkspaceEdit)
 
 logging.basicConfig(level='INFO')
 
@@ -52,6 +53,7 @@ class Spongebob(LanguageServer):
         logging.info("params: %s", params)
         if params['range']['start'] == params['range']['end']:
             # point selection, take the nearest word
+            logging.info("point selection: %s", params['range']['end'])
             line = self.content.splitlines()[params['range']['start']['line']]
             line_no = params['range']['start']['line']
             start_char, end_char, word = word_under_cursor(line, params['range']['start']['character'])
@@ -59,11 +61,13 @@ class Spongebob(LanguageServer):
             end = Position(line=line_no, character=end_char)
 
         else:
+            logging.info("range selection: %s", params['range'])
             start, end = params['range']['start'], params['range']['end']
             lines = self.content.splitlines()[start['line']:end['line'] + 1]
-            lines[0] = lines[0][start['character']:]
             lines[-1] = lines[-1][:end['character']]
+            lines[0] = lines[0][start['character']:]
             word = '\n'.join(lines)
+        logging.info("New word: %s", word)
         return [
             CodeAction(
                 title='Spongebob selection or word',
