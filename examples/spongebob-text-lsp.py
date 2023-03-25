@@ -3,8 +3,8 @@
 For if and when arguments over snake_case, camelCase, PascalCase, etc. get a LiTtLe ToO TiRiNg.
 """
 import asyncio
-from contextlib import suppress
 import logging
+from contextlib import suppress
 from dataclasses import dataclass
 
 from more_itertools.more import split_at
@@ -13,8 +13,7 @@ from lsp import LanguageServer
 from lsp.lsp.common import Position, Range
 from lsp.lsp.messages import InitializeParams, InitializeResult
 from lsp.lsp.server import (CodeAction, CodeActionParams, Command, DidChangeTextDocumentParams,
-                            DidOpenTextDocumentParams, OptionalVersionedTextDocumentIdentifier, ServerCapabilities,
-                            TextDocumentEdit, TextEdit, WorkspaceEdit)
+                            DidOpenTextDocumentParams, ServerCapabilities, TextEdit, WorkspaceEdit)
 
 logging.basicConfig(level='INFO')
 
@@ -68,11 +67,10 @@ class Spongebob(LanguageServer):
         return [
             CodeAction(
                 title='Spongebob selection or word',
-                edit=WorkspaceEdit(documentChanges=[
-                    TextDocumentEdit(textDocument=OptionalVersionedTextDocumentIdentifier(
-                        uri=params['textDocument']['uri'], version=None),
-                                     edits=[TextEdit(newText=spongebob(word), range=Range(start=start, end=end))])
-                ]))
+                edit=WorkspaceEdit(changes={
+                    params['textDocument']['uri']:
+                    [TextEdit(newText=spongebob(word), range=Range(start=start, end=end))]
+                }))
         ]
 
     async def text_document__did_open(self, params: DidOpenTextDocumentParams) -> None:
