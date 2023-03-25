@@ -13,8 +13,7 @@ from lsp import LanguageServer
 from lsp.lsp.common import Position, Range
 from lsp.lsp.messages import InitializeParams, InitializeResult
 from lsp.lsp.server import (CodeAction, CodeActionParams, Command, DidChangeTextDocumentParams,
-                            DidOpenTextDocumentParams, OptionalVersionedTextDocumentIdentifier, ServerCapabilities,
-                            TextDocumentEdit, TextEdit, WorkspaceEdit)
+                            DidOpenTextDocumentParams, ServerCapabilities, TextEdit, WorkspaceEdit)
 
 logging.basicConfig(level='INFO')
 

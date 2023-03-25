@@ -63,6 +63,7 @@ class Message(Generic[T_Content]):
 
     @classmethod
     def parse(cls, data: bytes) -> tuple[int, Self]:
+        # FIXME: we're just kinda assuming that all invalid content is just incomplete
         headers, _, rest = data.partition(b'\r\n\r\n')
         # trailing sep for the headers is consumed above, so it's ok to just split
         content_len: int | None = None
@@ -146,10 +147,6 @@ class LspProtocol(asyncio.BufferedProtocol, Generic[T_Content]):
         """
         Parse new data into new message, and shift data up
         """
-        # FIXME: we're just kinda assuming that all invalid content is just incomplete
-        # NOTE: It's possible that we get multiple full messages here,
-        #       and are doing wasteful copies. However, this is pretty rare given the
-        #       back and forth nature of the protocol
         self.cursor += nbytes
         tot_read = 0
         with suppress(IncompleteError):

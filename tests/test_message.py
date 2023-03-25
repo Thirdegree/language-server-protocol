@@ -70,3 +70,20 @@ async def test_message_roundtrip(request: JsonRpcRequest[Any], lsp_client: LspPr
     response = await lsp_client.read_message()
     assert bytes(msg) == bytes(response)
     assert msg == response
+
+
+@given(request1=jsonrpcrequest(), request2=jsonrpcrequest())
+async def test_split_messages(request1: JsonRpcRequest[Any], request2: JsonRpcRequest[Any],
+                              lsp_client: LspProtocol[Any]) -> None:
+    """
+    This test is mainly checking that the buffer_updated method can handle multiple messages being received at once.
+    """
+    msg1 = Message(content=request1)
+    msg2 = Message(content=request2)
+    data = bytes(msg1) + bytes(msg2)
+    lsp_client.transport.write(data)
+    response1 = await lsp_client.read_message()
+    response2 = await lsp_client.read_message()
+    assert msg1 == response1
+    assert msg2 == response2
+    assert bytes(response1) + bytes(response2) == data
