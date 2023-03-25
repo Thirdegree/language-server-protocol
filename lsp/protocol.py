@@ -42,6 +42,10 @@ class JsonRpcResponse(JsonRpcContent, Generic[T]):
     error: NotRequired[JsonRpcError]
 
 
+class IncompleteError(Exception):
+    pass
+
+
 @dataclass
 class Message(Generic[T_Content]):
     content: T_Content
@@ -59,7 +63,7 @@ class Message(Generic[T_Content]):
 
     @classmethod
     def parse(cls, data: bytes) -> tuple[int, Self]:
-        headers, rest = data.split(b'\r\n\r\n', maxsplit=1)
+        headers, _, rest = data.partition(b'\r\n\r\n')
         # trailing sep for the headers is consumed above, so it's ok to just split
         content_len: int | None = None
         content_type: bytes | None = None
@@ -67,9 +71,12 @@ class Message(Generic[T_Content]):
             if header.startswith(b'Content-Type: '):
                 content_type = header[14:]
             elif header.startswith(b'Content-Length: '):
-                content_len = int(header[16:])
+                with suppress(ValueError):
+                    content_len = int(header[16:])
         if content_len is None:
-            raise ValueError("Invalid content")
+            raise IncompleteError
+        if (actual := len(rest[:content_len])) < content_len:
+            raise IncompleteError(f"Less than expected content (wanted {content_len}, got {actual})")
         header_len = len(headers)
         content = json.loads(rest[:content_len] or b'{}')
         return header_len + content_len + 4, cls(content=content,
@@ -144,12 +151,16 @@ class LspProtocol(asyncio.BufferedProtocol, Generic[T_Content]):
         #       and are doing wasteful copies. However, this is pretty rare given the
         #       back and forth nature of the protocol
         self.cursor += nbytes
-        with suppress(ValueError):
-            msg: Message[T_Content]
-            read, msg = Message.parse(bytes(self.buffer[:self.cursor]))
-            self.buffer[:self.cursor - read] = self.buffer[read:self.cursor]
-            self.out_queue.put_nowait(msg)
-            self.cursor = self.cursor - read
+        tot_read = 0
+        with suppress(IncompleteError):
+            while self.cursor - tot_read:
+                msg: Message[T_Content]
+                read, msg = Message.parse(bytes(self.buffer[tot_read:self.cursor]))
+                tot_read += read
+                self.out_queue.put_nowait(msg)
+        if tot_read:
+            self.buffer[:self.cursor - tot_read] = self.buffer[tot_read:self.cursor]
+            self.cursor = self.cursor - tot_read
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
         assert isinstance(transport, asyncio.Transport)
