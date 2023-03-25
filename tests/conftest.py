@@ -7,9 +7,8 @@ from typing import Any, Type
 
 import pytest
 
-from examples.spongebob_text_lsp import Spongebob
 from lsp import LanguageServer
-from lsp.lsp.common import MessageData, T_Message
+from lsp.lsp.common import T_Message
 from lsp.lsp.messages import InitializeParams
 from lsp.protocol import JsonRpcRequest, JsonRpcResponse, LspProtocol, Message
 
@@ -40,12 +39,10 @@ async def lsp_client(event_loop: asyncio.AbstractEventLoop, lsp_server_port: int
     assert res is not None
     yield protocol
     transport.close()
-    protocol.write_message(make_request('shutdown', MessageData()))
-    protocol.write_message(make_request('exit', MessageData()))
 
 
 @pytest.fixture
-async def lsp_server_port(lsp_server: Spongebob) -> int:
+async def lsp_server_port(lsp_server: LanguageServer) -> int:
     assert lsp_server._listening_on is not None
     return lsp_server._listening_on
 

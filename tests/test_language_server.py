@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Type
+from typing import TYPE_CHECKING, Any, Type
 
 import pytest
 
@@ -10,7 +10,9 @@ from lsp.lsp.messages import InitializeParams, InitializeResult
 from lsp.lsp.server import (CodeAction, CodeActionContext, CodeActionParams, Command, SemanticTokens,
                             SemanticTokensDeltaParams, TextDocumentIdentifier)
 from lsp.protocol import LspProtocol
-from tests.conftest import RequstFn
+
+if TYPE_CHECKING:
+    from tests.conftest import RequstFn
 
 
 class ExampleLanguageServer(LanguageServer):

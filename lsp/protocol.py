@@ -65,7 +65,6 @@ class Message(Generic[T_Content]):
     def parse(cls, data: bytes) -> tuple[int, Self]:
         # FIXME: we're just kinda assuming that all invalid content is just incomplete
         headers, _, rest = data.partition(b'\r\n\r\n')
-        # trailing sep for the headers is consumed above, so it's ok to just split
         content_len: int | None = None
         content_type: bytes | None = None
         for header in headers.split(b'\r\n'):
