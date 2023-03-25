@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from contextlib import suppress
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from email.message import Message as EmailMessage
 from typing import Any, Generic, Literal, NotRequired, Self, TypedDict, TypeVar
 
@@ -49,14 +49,19 @@ class IncompleteError(Exception):
 @dataclass
 class Message(Generic[T_Content]):
     content: T_Content
+    encoding: str = field(init=False)
+    content_type: str | None = None
     _content_bytes: bytes | None = None
-    _encoding: str = 'utf-8'
     _content_len: int | None = None
-    _content_type: str | None = None
+
+    def __post_init__(self) -> None:
+        self.encoding = self.parse_encoding(self.content_type)
 
     def __bytes__(self) -> bytes:
-        return (f'Content-Length: {self.content_len}\r\n'
-                f'Content-Type: {self.content_type}\r\n\r\n').encode() + self.content_bytes
+        NL = '\r\n'
+        return (f'Content-Length: {self.content_len}{NL}'
+                f'{f"Content-Type: {self.content_type}{NL}" if self.content_type else ""}{NL}'
+                ).encode() + self.content_bytes
 
     def __repr__(self) -> str:
         return f"Message(content={self.content!r})"
@@ -79,16 +84,11 @@ class Message(Generic[T_Content]):
             raise IncompleteError(f"Less than expected content (wanted {content_len}, got {actual})")
         header_len = len(headers)
         content = json.loads(rest[:content_len] or b'{}')
+        con_type = None if content_type is None else content_type.decode()
         return header_len + content_len + 4, cls(content=content,
+                                                 content_type=con_type,
                                                  _content_len=content_len,
-                                                 _content_type=None if content_type is None else content_type.decode(),
                                                  _content_bytes=rest[:content_len])
-
-    @property
-    def content_type(self) -> str:
-        if self._content_type is None:
-            self._content_type = f'application/vscode-jsonrpc; charset={self.encoding}'
-        return self._content_type
 
     @property
     def content_len(self) -> int:
@@ -102,13 +102,15 @@ class Message(Generic[T_Content]):
             self._content_bytes = json.dumps(self.content).encode(self.encoding)
         return self._content_bytes
 
-    @property
-    def encoding(self) -> str:
-        if self._encoding is None:
-            msg = EmailMessage()
-            msg['Content-Type'] = self.content_type
-            self._encoding = msg.get_param('charset', 'utf-8')
-        return self._encoding
+    @classmethod
+    def parse_encoding(cls, content_type: str | None) -> str:
+        if content_type is None:
+            return 'utf-8'
+        msg = EmailMessage()
+        msg['Content-Type'] = content_type
+        encoding = msg.get_param('charset', 'utf-8')
+        assert isinstance(encoding, str)
+        return encoding
 
 
 class LspProtocol(asyncio.BufferedProtocol, Generic[T_Content]):
