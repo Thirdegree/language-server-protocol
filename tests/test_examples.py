@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any, Type
 
 import pytest
 
+from examples.fibb_lsp import Fib
 from examples.never_gonna_lsp import NeverGonna
 from examples.spongebob_text_lsp import Spongebob
 from lsp import LanguageServer
@@ -87,3 +88,23 @@ class TestNeverGonnaLsp:
                     "We've known each other for so long",
                     "You wouldn't get this from any other guy",
                 }
+
+
+class TestFib:
+
+    @pytest.fixture
+    def lsp_class(self) -> Type[LanguageServer]:
+        return Fib
+
+    async def test_completions(self, lsp_client: LspProtocol[Any], make_request: RequstFn[CodeActionParams]) -> None:
+        lsp_client.write_message(
+            make_request(
+                'textDocument/codeAction',
+                CodeActionParams(textDocument=TextDocumentIdentifier(uri=DocumentUri('')),
+                                 context=CodeActionContext(diagnostics=[]),
+                                 range=Range(start=Position(line=0, character=0), end=Position(line=0, character=20)))))
+        resp: Message[JsonRpcResponse[list[CodeAction]]] = await lsp_client.read_message()
+        assert 'result' in resp.content
+        assert 'edit' in resp.content['result'][0]
+        assert 'changes' in resp.content['result'][0]['edit']
+        assert resp.content['result'][0]['edit']['changes'][DocumentUri('')][0]['newText'] == '0,1,1,2,3,5,8,13,21'
