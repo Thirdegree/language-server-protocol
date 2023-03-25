@@ -1,3 +1,6 @@
+# note that this set of tests does not use the fixtures from conftest,
+# because those are oriented around the actual methods and fucntions
+# these on the other hand, are just testing the actual text prototocol itself, so an echo client is ideal
 import asyncio
 from collections.abc import Callable, Iterator
 from contextlib import suppress
