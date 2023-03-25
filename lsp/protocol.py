@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from contextlib import suppress
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from email.message import Message as EmailMessage
 from typing import Any, Generic, Literal, NotRequired, Self, TypedDict, TypeVar
 
@@ -42,46 +42,53 @@ class JsonRpcResponse(JsonRpcContent, Generic[T]):
     error: NotRequired[JsonRpcError]
 
 
+class IncompleteError(Exception):
+    pass
+
+
 @dataclass
 class Message(Generic[T_Content]):
     content: T_Content
+    encoding: str = field(init=False)
+    content_type: str | None = None
     _content_bytes: bytes | None = None
-    _encoding: str = 'utf-8'
     _content_len: int | None = None
-    _content_type: str | None = None
+
+    def __post_init__(self) -> None:
+        self.encoding = self.parse_encoding(self.content_type)
 
     def __bytes__(self) -> bytes:
-        return (f'Content-Length: {self.content_len}\r\n'
-                f'Content-Type: {self.content_type}\r\n\r\n').encode() + self.content_bytes
+        NL = '\r\n'
+        return (f'Content-Length: {self.content_len}{NL}'
+                f'{f"Content-Type: {self.content_type}{NL}" if self.content_type else ""}{NL}'
+                ).encode() + self.content_bytes
 
     def __repr__(self) -> str:
         return f"Message(content={self.content!r})"
 
     @classmethod
     def parse(cls, data: bytes) -> tuple[int, Self]:
-        headers, rest = data.split(b'\r\n\r\n', maxsplit=1)
-        # trailing sep for the headers is consumed above, so it's ok to just split
+        # FIXME: we're just kinda assuming that all invalid content is just incomplete
+        headers, _, rest = data.partition(b'\r\n\r\n')
         content_len: int | None = None
         content_type: bytes | None = None
         for header in headers.split(b'\r\n'):
             if header.startswith(b'Content-Type: '):
                 content_type = header[14:]
             elif header.startswith(b'Content-Length: '):
-                content_len = int(header[16:])
+                with suppress(ValueError):
+                    content_len = int(header[16:])
         if content_len is None:
-            raise ValueError("Invalid content")
+            raise IncompleteError
+        if (actual := len(rest[:content_len])) < content_len:
+            raise IncompleteError(f"Less than expected content (wanted {content_len}, got {actual})")
         header_len = len(headers)
         content = json.loads(rest[:content_len] or b'{}')
+        con_type = None if content_type is None else content_type.decode()
         return header_len + content_len + 4, cls(content=content,
+                                                 content_type=con_type,
                                                  _content_len=content_len,
-                                                 _content_type=None if content_type is None else content_type.decode(),
                                                  _content_bytes=rest[:content_len])
-
-    @property
-    def content_type(self) -> str:
-        if self._content_type is None:
-            self._content_type = f'application/vscode-jsonrpc; charset={self.encoding}'
-        return self._content_type
 
     @property
     def content_len(self) -> int:
@@ -95,13 +102,15 @@ class Message(Generic[T_Content]):
             self._content_bytes = json.dumps(self.content).encode(self.encoding)
         return self._content_bytes
 
-    @property
-    def encoding(self) -> str:
-        if self._encoding is None:
-            msg = EmailMessage()
-            msg['Content-Type'] = self.content_type
-            self._encoding = msg.get_param('charset', 'utf-8')
-        return self._encoding
+    @classmethod
+    def parse_encoding(cls, content_type: str | None) -> str:
+        if content_type is None:
+            return 'utf-8'
+        msg = EmailMessage()
+        msg['Content-Type'] = content_type
+        encoding = msg.get_param('charset', 'utf-8')
+        assert isinstance(encoding, str)
+        return encoding
 
 
 class LspProtocol(asyncio.BufferedProtocol, Generic[T_Content]):
@@ -139,17 +148,17 @@ class LspProtocol(asyncio.BufferedProtocol, Generic[T_Content]):
         """
         Parse new data into new message, and shift data up
         """
-        # FIXME: we're just kinda assuming that all invalid content is just incomplete
-        # NOTE: It's possible that we get multiple full messages here,
-        #       and are doing wasteful copies. However, this is pretty rare given the
-        #       back and forth nature of the protocol
         self.cursor += nbytes
-        with suppress(ValueError):
-            msg: Message[T_Content]
-            read, msg = Message.parse(bytes(self.buffer[:self.cursor]))
-            self.buffer[:self.cursor - read] = self.buffer[read:self.cursor]
-            self.out_queue.put_nowait(msg)
-            self.cursor = self.cursor - read
+        tot_read = 0
+        with suppress(IncompleteError):
+            while self.cursor - tot_read:
+                msg: Message[T_Content]
+                read, msg = Message.parse(bytes(self.buffer[tot_read:self.cursor]))
+                tot_read += read
+                self.out_queue.put_nowait(msg)
+        if tot_read:
+            self.buffer[:self.cursor - tot_read] = self.buffer[tot_read:self.cursor]
+            self.cursor = self.cursor - tot_read
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
         assert isinstance(transport, asyncio.Transport)
